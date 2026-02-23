@@ -8,26 +8,75 @@
 <style>
 :root {
   --bg: #0f0f11;
-  --surface: #18181c;
-  --surface2: #1e1e24;
-  --surface3: #222228;
-  --border: #2a2a34;
-  --border2: #33333f;
-  --accent: #e8c547;
-  --accent-dim: rgba(232,197,71,0.12);
-  --accent2: #5ce6a4;
-  --accent2-dim: rgba(92,230,164,0.1);
-  --danger: #e85c5c;
-  --danger-dim: rgba(232,92,92,0.1);
+  --surface: #18181b;
+  --surface2: #212124;
+  --surface3: #2d2d30;
+  --border: #3a3a3f;
+  --border2: #505057;
   --text: #e8e8f0;
-  --text2: #a0a0b8;
-  --muted: #55556a;
-  --accent-text: #0f0f11; /* Text on accent-colored buttons */
+  --text2: #c1c1c9;
+  --muted: #80808b;
+  --accent-text: #0f0f11;
   --font-serif: 'Noto Serif SC', serif;
   --font-mono: 'JetBrains Mono', monospace;
   --radius: 8px;
   --radius-sm: 5px;
 }
+
+/* Accent Color Palettes */
+:root, html[data-accent='default'] {
+  --accent: #f5d44b; /* 更亮的黄色 */
+  --accent-dim: rgba(245, 212, 75, 0.15);
+  --accent2: #70d8f7; /* 更亮的蓝色 */
+  --accent2-dim: rgba(112, 216, 247, 0.15);
+  --danger: #e85c5c;
+  --danger-dim: rgba(232, 92, 92, 0.1);
+}
+html[data-accent='sepia'] {
+  --accent: #a3816e; /* 更鲜明的棕褐色 */
+  --accent-dim: rgba(163, 129, 110, 0.15);
+  --accent2: #7cb365; /* 更鲜明的绿色 */
+  --accent2-dim: rgba(124, 179, 101, 0.15);
+  --danger: #c97555;
+  --danger-dim: rgba(201, 117, 85, 0.1);
+}
+html[data-accent='greenish'] {
+  --accent: #6ea381; /* 更鲜明的蓝绿色 */
+  --accent-dim: rgba(110, 163, 129, 0.15);
+  --accent2: #65b37c; /* 更鲜明的绿色 */
+  --accent2-dim: rgba(101, 179, 124, 0.15);
+  --danger: #c95555;
+  --danger-dim: rgba(201, 85, 85, 0.1);
+}
+
+html[data-accent='brownish-yellow'] {
+  --accent: #B8860B; /* 棕黄色 */
+  --accent-dim: rgba(184, 134, 11, 0.15);
+  --accent2: #DAA520; /* 金色 */
+  --accent2-dim: rgba(218, 165, 32, 0.15);
+  --danger: #CD5C5C; /* 印度红 */
+  --danger-dim: rgba(205, 92, 92, 0.1);
+}
+
+html[data-accent='blue'] {
+  --accent: #337ab7; /* 蓝色 */
+  --accent-dim: rgba(51, 122, 183, 0.15);
+  --accent2: #5bc0de; /* 亮蓝色 */
+  --accent2-dim: rgba(91, 192, 222, 0.15);
+  --danger: #d9534f; /* 红色 */
+  --danger-dim: rgba(217, 83, 79, 0.1);
+}
+
+html[data-accent='purple'] {
+  --accent: #8A2BE2; /* 紫罗兰色 */
+  --accent-dim: rgba(138, 43, 226, 0.15);
+  --accent2: #9370DB; /* 中等紫色 */
+  --accent2-dim: rgba(147, 112, 219, 0.15);
+  --danger: #FF69B4; /* 热粉色 */
+  --danger-dim: rgba(255, 105, 180, 0.1);
+}
+
+/* Light Theme */
 html[data-theme='light'] {
   --bg: #f8f9fa;
   --surface: #ffffff;
@@ -35,17 +84,47 @@ html[data-theme='light'] {
   --surface3: #e9ecef;
   --border: #dee2e6;
   --border2: #ced4da;
-  --accent: #339af0;
-  --accent-dim: rgba(51, 154, 240, 0.1);
-  --accent2: #20c997;
-  --accent2-dim: rgba(32, 201, 151, 0.1);
-  --danger: #fa5252;
-  --danger-dim: rgba(250, 82, 82, 0.1);
   --text: #212529;
   --text2: #495057;
   --muted: #868e96;
-  --accent-text: #ffffff; /* Text on accent-colored buttons */
+  --accent-text: #ffffff;
 }
+
+/* Brown Theme */
+html[data-theme='brown'] {
+  --bg: #6b5a4d; /* 稍浅的棕色背景 */
+  --surface: #5d4d40; /* 稍浅的表面色 */
+  --surface2: #504135; /* 次级表面色 */
+  --surface3: #43362c; /* 三级表面色 */
+  --border: #7e6c5c; /* 边框色 */
+  --border2: #928070; /* 次级边框色 */
+  --text: #f0e8df; /* 浅色文字 */
+  --text2: #d4ccbe; /* 稍浅文字 */
+  --muted: #b8b0a8; /* 静音文字 */
+  --accent-text: #ffffff; /* 强调文字 */
+}
+html[data-theme='light'][data-accent='default'] {
+  --accent: #4a9ffc; /* 更亮的蓝色 */
+  --accent-dim: rgba(74, 159, 252, 0.15);
+  --accent2: #34d1a5; /* 更亮的青色 */
+  --accent2-dim: rgba(52, 209, 165, 0.15);
+  --danger: #fa5252;
+  --danger-dim: rgba(250, 82, 82, 0.1);
+}
+html[data-theme='light'][data-accent='sepia'] { --accent-text: #f3f0ed; }
+html[data-theme='dark'][data-accent='sepia'] { --accent-text: #f3f0ed; }
+html[data-theme='light'][data-accent='greenish'] { --accent-text: #edf3f0; }
+html[data-theme='dark'][data-accent='greenish'] { --accent-text: #edf3f0; }
+
+
+.theme-picker { display: flex; align-items: center; gap: 8px; margin: 0 4px; }
+.theme-dot { width: 16px; height: 16px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+.theme-dot:hover { transform: scale(1.15); }
+.theme-dot.selected { border-color: var(--text); transform: scale(1.2); }
+.theme-dot[data-color='default'] { background-color: #e8c547; }
+.theme-dot[data-color='sepia'] { background-color: #8c6f5a; }
+.theme-dot[data-color='greenish'] { background-color: #5a8c6f; }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background: var(--bg);
@@ -57,7 +136,7 @@ body {
 }
 
 /* ── Layout ── */
-.app { display: flex; height: 100vh; overflow: hidden; }
+.app { display: flex; height: 100vh; overflow: hidden; background: var(--bg); }
 
 /* ── Sidebar ── */
 .sidebar {
@@ -423,6 +502,147 @@ body {
   animation: fadeIn 0.12s ease;
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Theme Settings Modal Specific Styles */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close-btn:hover {
+  color: var(--text);
+  background: var(--surface2);
+}
+.modal-close-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.setting-group {
+  margin-bottom: 1.5rem;
+}
+.setting-group h3 {
+  font-size: 0.9rem;
+  color: var(--text2);
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.theme-mode-selector {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.theme-mode-btn {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+}
+.theme-mode-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.theme-mode-btn.selected {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+.theme-mode-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.accent-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.accent-picker .theme-dot {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: 80px;
+}
+
+.accent-picker .theme-dot:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.accent-picker .theme-dot.selected {
+  border-color: var(--accent);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.accent-picker .theme-dot.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: var(--accent);
+  color: var(--accent-text);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.accent-picker .theme-dot .accent-name {
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.accent-picker .theme-dot .color-preview {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-bottom: 0.25rem;
+}
+
 .modal {
   background: var(--surface);
   border: 1px solid var(--border2);
@@ -598,11 +818,18 @@ body {
 
 
 /* ── Priority dot ── */
-.pri-dot { width: 8px; height: 8px; min-width: 8px; border-radius: 50%; cursor: pointer; flex-shrink: 0; transition: transform 0.15s; margin-top: 1px; }
-.pri-dot:hover { opacity: 0.75; }
-.pri-dot.high   { background: #e85c5c; box-shadow: 0 0 0 2px rgba(232,92,92,0.2); }
-.pri-dot.medium { background: #e8c547; box-shadow: 0 0 0 2px rgba(232,197,71,0.2); }
-.pri-dot.normal { background: transparent; border: 1.5px solid var(--muted); }
+.pri-icon { 
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  cursor: pointer; 
+  flex-shrink: 0; 
+  transition: transform 0.15s; 
+}
+.pri-icon:hover { transform: scale(1.2); }
+.pri-icon.high   { color: var(--danger); }
+.pri-icon.medium { color: var(--accent); }
+.pri-icon.normal { color: transparent; }
 
 /* ── Todo main ── */
 .todo-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.2rem; }
@@ -689,15 +916,99 @@ body.theme-forest { --bg:#0a0f0a;--surface:#131a13;--surface2:#192019;--surface3
 body.theme-ocean  { --bg:#070e16;--surface:#0d1825;--surface2:#121f2e;--surface3:#162538;--border:#1e3245;--border2:#254055;--accent:#38bdf8;--accent-dim:rgba(56,189,248,0.12);--accent2:#a78bfa;--accent2-dim:rgba(167,139,250,0.1);--text:#e0f2fe;--text2:#7aadc8;--muted:#3d6280; }
 body.theme-sand   { --bg:#1a1510;--surface:#221d17;--surface2:#28231c;--surface3:#2e2820;--border:#3d3528;--border2:#4d4333;--accent:#e8a547;--accent-dim:rgba(232,165,71,0.12);--accent2:#5ce6c4;--accent2-dim:rgba(92,230,196,0.1);--text:#f0e8d8;--text2:#b8a888;--muted:#6a5a48; }
 
+/* Theme Settings Modal Styles */
+.modal-header button.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text2);
+  line-height: 1;
+  padding: 0;
+}
+.modal-close-btn:hover {
+  color: var(--text);
+}
+
+.theme-mode-selector {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.theme-mode-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface2);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.theme-mode-option:hover {
+  background-color: var(--surface3);
+  border-color: var(--border2);
+}
+
+.theme-mode-option input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+.theme-mode-option span {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.accent-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.theme-dot {
+  width: 60px; /* 增加宽度以容纳文字 */
+  height: 60px; /* 增加高度 */
+  border-radius: var(--radius-sm); /* 调整为方角 */
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden; /* 隐藏溢出文字 */
+}
+
+.theme-dot.selected {
+  border-color: var(--accent);
+  transform: scale(1.05);
+}
+
+.theme-dot:hover {
+  transform: scale(1.05);
+  border-color: var(--accent2);
+}
+
+.accent-name {
+  color: var(--accent-text); /* 使用为 accent 文本定义的颜色 */
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3); /* 增加文字可读性 */
+  position: absolute;
+  bottom: 5px; /* 调整文字位置 */
+  background-color: rgba(0,0,0,0.2); /* 文字背景，增加可读性 */
+  padding: 2px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
 .theme-picker { display:flex; align-items:center; gap:0.3rem; margin-top:0.5rem; }
-.theme-dot { width:15px; height:15px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:border-color 0.15s; flex-shrink:0; }
-.theme-dot.active { border-color:var(--text2); }
-.theme-dot-dark   { background:conic-gradient(#0f0f11 50%,#e8c547 50%); }
-.theme-dot-slate  { background:conic-gradient(#0d1117 50%,#58a6ff 50%); }
-.theme-dot-rose   { background:conic-gradient(#120a0c 50%,#f97583 50%); }
-.theme-dot-forest { background:conic-gradient(#0a0f0a 50%,#73c991 50%); }
-.theme-dot-ocean  { background:conic-gradient(#070e16 50%,#38bdf8 50%); }
-.theme-dot-sand   { background:conic-gradient(#1a1510 50%,#e8a547 50%); }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 4px; }
@@ -726,11 +1037,11 @@ body.theme-sand   { --bg:#1a1510;--surface:#221d17;--surface2:#28231c;--surface3
       <h1>📋 Todo 清单</h1>
       <div class="sidebar-stats" id="stats">加载中...</div>
       <div class="sync-row">
-        <div class="sync-dot local" id="sync-dot"></div>
-        <span class="sync-label" id="sync-label">本地存储</span>
-        <button class="sync-settings-btn" id="theme-toggle-btn" title="切换主题">🌙</button>
-        <button class="sync-settings-btn" onclick="openSetupModal()" title="同步设置">⚙</button>
-      </div>
+          <span class="sync-dot" id="sync-dot"></span>
+          <span class="sync-label" id="sync-label">本地存储</span>
+          <button class="sync-settings-btn" id="open-theme-modal-btn" title="主题设置">🎨</button>
+          <button class="sync-settings-btn" onclick="openSetupModal()" title="同步设置">⚙️</button>
+        </div>
 
     </div>
     <div class="sidebar-cats" id="sidebar-cats"></div>
@@ -825,6 +1136,62 @@ body.theme-sand   { --bg:#1a1510;--surface:#221d17;--surface2:#28231c;--surface3
 
 <input type="file" id="import-file" accept=".json" style="display:none" onchange="importJSON(event)">
 
+<!-- Modal: Theme Settings -->
+<div class="modal-overlay" id="theme-settings-modal" style="display:none">
+  <div class="modal" style="width:360px">
+    <div class="modal-header">
+  <h2>主题设置</h2>
+  <button class="modal-close-btn" onclick="closeThemeSettingsModal()" title="关闭">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+</div>
+<div class="modal-content">
+  <div class="setting-group">
+    <h3>基础模式</h3>
+    <div class="theme-mode-selector">
+      <button class="theme-mode-btn" id="base-theme-dark" data-theme="dark" title="切换到深色模式">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <span>深色模式</span>
+      </button>
+      <button class="theme-mode-btn" id="base-theme-light" data-theme="light" title="切换到浅色模式">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <span>浅色模式</span>
+      </button>
+      <button class="theme-mode-btn" id="base-theme-brown" data-theme="brown" title="切换到棕色模式">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-leaf">
+          <path d="M11 20A7 7 0 0 1 9.86 6.47c-.91-2.15-3.62-3.3-6.17-2.84a1.5 1.5 0 0 0-1.03 1.03c-.46 2.55.69 5.26 2.84 6.17A7 7 0 0 1 11 20z"/>
+          <path d="M18.83 9.06c.3-4.56-2.6-7.65-7.3-8.8-2.5.72-2.97 2.9-2.13 4.95a7 7 0 0 0 5.8 8.64c2.3.64 4.45-.4 5.2-2.6Z"/>
+        </svg>
+        <span>棕色模式</span>
+      </button>
+    </div>
+  </div>
+
+      <div class="setting-group" style="margin-top: 1.5rem;">
+        <h3>主题色</h3>
+        <div class="accent-picker" id="accent-picker">
+          <!-- Accent color dots will be dynamically inserted here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Modal: Keyboard Shortcuts -->
 <div class="modal-overlay" id="shortcuts-modal" style="display:none">
   <div class="modal">
@@ -904,12 +1271,11 @@ const DEFAULT_DATA = {
   todos: []
 };
 const EMOJIS = ['📌','💳','🏠','📋','💰','📈','💊','🚗','🐱','💻','🌱','📦','🎯','🔧','📝','🎉','⭐','🔑','📱','🛒','✈️','🏋️','📚','💡','🍔','🏥','🎮','🌏','🏦','💼','🧹','🔒','📞','🎁','🌿','🛠️','🧾','🚀'];
-const LS_THEME = 'todo_theme';
+const LS_THEME = 'todo_theme', LS_ACCENT = 'todo_accent';
 const SORT_LABELS = { manual:'手动', priority:'优先级', due:'截止日期' };
 
 // ── App State ──────────────────────────────────────────────
-let state, activeCat='all', showDone=true, collapsed={}, currentTheme = 'dark';
-let sortOrder='manual', filterTag=null;
+let state, activeCat='all', showDone=true, collapsed={}, currentTheme = 'dark', currentAccent = 'default', sortOrder='manual', filterTag=null;
 let editingCatId=null, editingTodoId=null, modalPriority='normal';
 let pendingDelType=null, pendingDelId=null;
 
@@ -1027,6 +1393,7 @@ function render(){
 }
 
 function renderItem(item){
+  const PRI_ICONS = { high: '▲', medium: '●', normal: ' ' };
   const pri=item.priority||'normal',due=formatDue(item.dueDate),tags=item.tags||[];
   const metaHtml=[
     due?`<span class="due-badge ${due.cls}">📅 ${due.label}</span>`:'',
@@ -1035,7 +1402,7 @@ function renderItem(item){
   return `<div class="todo-item ${item.done?'done':''}" draggable="true" data-id="${item.id}" data-cat="${item.cat}">
     <span class="todo-drag-handle">⠿</span>
     <div class="checkbox" onclick="toggleTodo('${item.id}')"></div>
-    <span class="pri-dot ${pri}" onclick="cyclePriority('${item.id}')" title="点击切换优先级"></span>
+        <span class="pri-icon ${pri}" onclick="cyclePriority('${item.id}')" title="点击切换优先级">${PRI_ICONS[pri]}</span>
     <div class="todo-main">
       <span class="todo-text" ondblclick="openInlineEdit('${item.id}')">${escHtml(item.text)}</span>
       ${metaHtml?`<div class="todo-meta">${metaHtml}</div>`:''}
@@ -1236,24 +1603,103 @@ document.getElementById('todo-text-input').addEventListener('keydown',e=>{if(e.k
 // ── Theme ─────────────────────────────────────────────────
 function setupTheme() {
   currentTheme = localStorage.getItem(LS_THEME) || 'dark';
+  currentAccent = localStorage.getItem(LS_ACCENT) || 'default';
+  console.log('setupTheme: Initial currentTheme =', currentTheme, 'currentAccent =', currentAccent); // ADDED
   applyTheme();
-  const btn = document.getElementById('theme-toggle-btn');
-  btn.addEventListener('click', () => {
-    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    applyTheme();
-    localStorage.setItem(LS_THEME, currentTheme);
+
+  // New: Event listener for opening the theme settings modal
+  document.getElementById('open-theme-modal-btn').addEventListener('click', openThemeSettingsModal);
+}
+
+function openThemeSettingsModal() {
+  const modal = document.getElementById('theme-settings-modal');
+  modal.style.display = 'flex';
+  console.log('openThemeSettingsModal: Modal opened, currentTheme =', currentTheme); // ADDED
+
+  // Attach event listeners for base theme buttons
+  document.querySelectorAll('.theme-mode-btn').forEach(button => {
+    button.onclick = () => { // Use onclick for simplicity, or addEventListener without {once: true}
+      currentTheme = button.dataset.theme; // Get theme from data-theme attribute
+      localStorage.setItem(LS_THEME, currentTheme);
+      console.log('button click: New currentTheme =', currentTheme, 'localStorage set to', localStorage.getItem(LS_THEME));
+      applyTheme();
+    };
   });
+
+  setupAccentPicker(); // Render and select accent dots
+
+  // Add event listener to close modal when clicking outside
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) {
+      closeThemeSettingsModal();
+    }
+  });
+}
+
+function closeThemeSettingsModal() {
+  document.getElementById('theme-settings-modal').style.display = 'none';
 }
 
 function applyTheme() {
   document.documentElement.setAttribute('data-theme', currentTheme);
-  const btn = document.getElementById('theme-toggle-btn');
-  if (currentTheme === 'dark') {
-    btn.textContent = '☀️';
-    btn.title = '切换到亮色主题';
-  } else {
-    btn.textContent = '🌙';
-    btn.title = '切换到暗色主题';
+  document.documentElement.setAttribute('data-accent', currentAccent);
+  console.log('applyTheme: Applying theme - data-theme =', currentTheme, 'data-accent =', currentAccent);
+
+  // Update 'selected' class for base theme buttons in the modal
+  document.querySelectorAll('.theme-mode-btn').forEach(button => {
+    button.classList.toggle('selected', button.dataset.theme === currentTheme);
+  });
+
+  setupAccentPicker(); // Re-render accent dots
+}
+
+function setupAccentPicker() {
+  const accents = ['default', 'sepia', 'greenish', 'brownish-yellow', 'blue', 'purple'];
+  const accentNames = {
+    'default': '默认',
+    'sepia': '怀旧',
+    'greenish': '护眼绿',
+    'brownish-yellow': '棕黄色',
+    'blue': '蓝色',
+    'purple': '紫色'
+  };
+  const picker = document.getElementById('accent-picker');
+  if (!picker) return; // Ensure picker exists (modal might not be open)
+
+  picker.innerHTML = accents.map(accent => {
+    // Dynamically get the accent color from CSS variables for display
+    const tempDiv = document.createElement('div');
+    document.documentElement.setAttribute('data-accent', accent); // Temporarily set to get color
+    const color = getComputedStyle(document.documentElement).getPropertyValue('--accent');
+    document.documentElement.setAttribute('data-accent', currentAccent); // Reset to current accent
+
+    const isSelected = currentAccent === accent;
+    const checkmarkSvg = isSelected ? `
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check" style="position: absolute; top: 4px; right: 4px; color: var(--accent);">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>` : '';
+
+    return `<div class="theme-dot ${isSelected ? 'selected' : ''}"
+                 data-color="${accent}"
+                 onclick="setAccentColor('${accent}')"
+                 style="background-color: ${color || 'transparent'};"
+                 title="${accentNames[accent]}">
+                 <span class="accent-name">${accentNames[accent]}</span>
+                 ${checkmarkSvg}
+             </div>`;
+  }).join('');
+}
+
+function setAccentColor(accent) {
+  currentAccent = accent;
+  localStorage.setItem(LS_ACCENT, accent);
+  document.documentElement.setAttribute('data-accent', accent);
+  // Re-render dots to update selection
+  const picker = document.getElementById('accent-picker');
+  if (picker) {
+    picker.querySelectorAll('.theme-dot').forEach(dot => {
+      dot.classList.toggle('selected', dot.dataset.color === accent);
+    });
   }
 }
 
