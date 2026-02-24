@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Todo 清单</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f11;
+  --surface: #18181b;
+  --surface2: #212124;
+  --surface3: #2d2d30;
+  --border: #3a3a3f;
+  --border2: #505057;
+  --text: #e8e8f0;
+  --text2: #c1c1c9;
+  --muted: #80808b;
+  --accent-text: #0f0f11;
+  --font-serif: 'Noto Serif SC', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 8px;
+  --radius-sm: 5px;
+}
+
+/* Accent Color Palettes */
+:root, html[data-accent='default'] {
+  --accent: #f5d44b; /* 更亮的黄色 */
+  --accent-dim: rgba(245, 212, 75, 0.15);
+  --accent2: #70d8f7; /* 更亮的蓝色 */
+  --accent2-dim: rgba(112, 216, 247, 0.15);
+  --danger: #e85c5c;
+  --danger-dim: rgba(232, 92, 92, 0.1);
+}
+html[data-accent='sepia'] {
+  --accent: #a3816e; /* 更鲜明的棕褐色 */
+  --accent-dim: rgba(163, 129, 110, 0.15);
+  --accent2: #7cb365; /* 更鲜明的绿色 */
+  --accent2-dim: rgba(124, 179, 101, 0.15);
+  --danger: #c97555;
+  --danger-dim: rgba(201, 117, 85, 0.1);
+}
+html[data-accent='greenish'] {
+  --accent: #6ea381; /* 更鲜明的蓝绿色 */
+  --accent-dim: rgba(110, 163, 129, 0.15);
+  --accent2: #65b37c; /* 更鲜明的绿色 */
+  --accent2-dim: rgba(101, 179, 124, 0.15);
+  --danger: #c95555;
+  --danger-dim: rgba(201, 85, 85, 0.1);
+}
+
+html[data-accent='brownish-yellow'] {
+  --accent: #B8860B; /* 棕黄色 */
+  --accent-dim: rgba(184, 134, 11, 0.15);
+  --accent2: #DAA520; /* 金色 */
+  --accent2-dim: rgba(218, 165, 32, 0.15);
+  --danger: #CD5C5C; /* 印度红 */
+  --danger-dim: rgba(205, 92, 92, 0.1);
+}
+
+html[data-accent='blue'] {
+  --accent: #337ab7; /* 蓝色 */
+  --accent-dim: rgba(51, 122, 183, 0.15);
+  --accent2: #5bc0de; /* 亮蓝色 */
+  --accent2-dim: rgba(91, 192, 222, 0.15);
+  --danger: #d9534f; /* 红色 */
+  --danger-dim: rgba(217, 83, 79, 0.1);
+}
+
+html[data-accent='purple'] {
+  --accent: #8A2BE2; /* 紫罗兰色 */
+  --accent-dim: rgba(138, 43, 226, 0.15);
+  --accent2: #9370DB; /* 中等紫色 */
+  --accent2-dim: rgba(147, 112, 219, 0.15);
+  --danger: #FF69B4; /* 热粉色 */
+  --danger-dim: rgba(255, 105, 180, 0.1);
+}
+
+/* Light Theme */
+html[data-theme='light'] {
+  --bg: #f8f9fa;
+  --surface: #ffffff;
+  --surface2: #f1f3f5;
+  --surface3: #e9ecef;
+  --border: #dee2e6;
+  --border2: #ced4da;
+  --text: #212529;
+  --text2: #495057;
+  --muted: #868e96;
+  --accent-text: #ffffff;
+}
+
+/* Brown Theme */
+html[data-theme='brown'] {
+  --bg: #6b5a4d; /* 稍浅的棕色背景 */
+  --surface: #5d4d40; /* 稍浅的表面色 */
+  --surface2: #504135; /* 次级表面色 */
+  --surface3: #43362c; /* 三级表面色 */
+  --border: #7e6c5c; /* 边框色 */
+  --border2: #928070; /* 次级边框色 */
+  --text: #f0e8df; /* 浅色文字 */
+  --text2: #d4ccbe; /* 稍浅文字 */
+  --muted: #b8b0a8; /* 静音文字 */
+  --accent-text: #ffffff; /* 强调文字 */
+}
+html[data-theme='light'][data-accent='default'] {
+  --accent: #4a9ffc; /* 更亮的蓝色 */
+  --accent-dim: rgba(74, 159, 252, 0.15);
+  --accent2: #34d1a5; /* 更亮的青色 */
+  --accent2-dim: rgba(52, 209, 165, 0.15);
+  --danger: #fa5252;
+  --danger-dim: rgba(250, 82, 82, 0.1);
+}
+html[data-theme='light'][data-accent='sepia'] { --accent-text: #f3f0ed; }
+html[data-theme='dark'][data-accent='sepia'] { --accent-text: #f3f0ed; }
+html[data-theme='light'][data-accent='greenish'] { --accent-text: #edf3f0; }
+html[data-theme='dark'][data-accent='greenish'] { --accent-text: #edf3f0; }
+
+
+
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-serif);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Layout ── */
+.app { display: flex; height: 100vh; overflow: hidden; background: var(--bg); }
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 240px;
+  min-width: 240px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 1.25rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-header h1 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+.sidebar-stats {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+.sidebar-stats span { color: var(--accent2); }
+.sidebar-cats { flex: 1; overflow-y: auto; padding: 0.5rem 0; }
+.sidebar-cats::-webkit-scrollbar { width: 3px; }
+.sidebar-cats::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.cat-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 0;
+  transition: background 0.12s;
+  position: relative;
+  user-select: none;
+}
+.cat-nav-item:hover { background: var(--surface2); }
+.cat-nav-item.active { background: var(--accent-dim); }
+.cat-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--accent);
+}
+.cat-nav-icon { font-size: 0.95rem; }
+.cat-nav-label { flex: 1; font-size: 0.82rem; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cat-nav-item.active .cat-nav-label { color: var(--text); }
+.cat-nav-count {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  padding: 0.1rem 0.35rem;
+  background: var(--surface3);
+  border-radius: 10px;
+}
+.cat-nav-del {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.2rem;
+  opacity: 0.6;
+  border-radius: 3px;
+}
+.cat-nav-del:hover { opacity: 1; background: var(--danger-dim); }
+.cat-nav-item:hover .cat-nav-del { display: block; }
+
+.cat-nav-item.all-item { margin-bottom: 4px; border-bottom: 1px solid var(--border); padding-bottom: 0.6rem; margin-bottom: 0.4rem; }
+
+.sidebar-add-cat {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+}
+.add-cat-form { display: flex; gap: 0.4rem; }
+.add-cat-form input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-family: var(--font-serif);
+  outline: none;
+  min-width: 0;
+}
+.add-cat-form input::placeholder { color: var(--muted); }
+.add-cat-form input:focus { border-color: var(--accent); }
+.btn-add-cat {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-dim);
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  transition: all 0.12s;
+}
+.btn-add-cat:hover { background: var(--accent); color: var(--accent-text); font-weight: 600; }
+
+/* ── Main ── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── Toolbar ── */
+.toolbar {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.toolbar-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.toolbar-title .icon { font-size: 1.1rem; }
+.search-wrap { position: relative; flex: 1; max-width: 320px; }
+.search-wrap input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 0.42rem 0.75rem 0.42rem 2rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-family: var(--font-serif);
+  outline: none;
+  transition: border 0.15s;
+}
+.search-wrap input:focus { border-color: var(--accent); }
+.search-wrap input::placeholder { color: var(--muted); }
+.search-icon {
+  position: absolute;
+  left: 0.65rem; top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+.toolbar-actions { display: flex; gap: 0.5rem; margin-left: auto; }
+.btn-icon {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  cursor: pointer;
+  padding: 0.38rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+.btn-icon:hover { border-color: var(--border2); background: var(--surface3); color: var(--text); }
+.btn-primary {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-dim);
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0.38rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-family: var(--font-serif);
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+.btn-primary:hover { background: var(--accent); color: var(--accent-text); font-weight: 600; }
+
+/* ── Todo list area ── */
+.todo-area { flex: 1; overflow-y: auto; padding: 1rem 1.5rem 2rem; }
+.todo-area::-webkit-scrollbar { width: 4px; }
+.todo-area::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* Section within todo area (when showing all) */
+.section { margin-bottom: 1.5rem; }
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  margin-bottom: 0.4rem;
+  cursor: pointer;
+  user-select: none;
+}
+.section-icon { font-size: 0.95rem; }
+.section-title { font-size: 0.88rem; font-weight: 600; color: var(--text2); flex: 1; }
+.section-count { font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); }
+.section-caret { color: var(--muted); font-size: 0.6rem; transition: transform 0.18s; }
+.section-caret.collapsed { transform: rotate(-90deg); }
+.section-items { }
+.section-items.hidden { display: none; }
+
+/* Todo item */
+.todo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  margin-bottom: 1px;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+  group: true;
+}
+.todo-item:hover { background: var(--surface2); }
+.todo-item.done { opacity: 0.45; }
+.todo-item.done .todo-text { text-decoration: line-through; color: var(--muted); }
+.todo-item.hidden { display: none; }
+
+.checkbox {
+  width: 17px; height: 17px; min-width: 17px;
+  border: 1.5px solid var(--border2);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+  transition: all 0.15s;
+  background: transparent;
+  flex-shrink: 0;
+}
+.checkbox:hover { border-color: var(--accent2); }
+.todo-item.done .checkbox {
+  background: var(--accent2);
+  border-color: var(--accent2);
+}
+.todo-item.done .checkbox::after {
+  content: '✓';
+  font-size: 10px;
+  color: #0f0f11;
+  font-weight: 700;
+}
+.todo-text {
+  flex: 1;
+  font-size: 0.855rem;
+  line-height: 1.55;
+  color: var(--text);
+  word-break: break-word;
+  cursor: default;
+}
+.todo-edit-btn, .todo-del-btn {
+  /* always in layout — no display:none so nothing shifts */
+  opacity: 0;
+  pointer-events: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+  transition: opacity 0.1s;
+}
+.todo-edit-btn { color: var(--accent); }
+.todo-edit-btn:hover { background: var(--accent-dim); }
+.todo-del-btn { color: var(--danger); }
+.todo-del-btn:hover { background: var(--danger-dim); }
+.todo-item:hover .todo-edit-btn,
+.todo-item:hover .todo-del-btn { opacity: 1; pointer-events: auto; }
+.todo-item.editing .todo-edit-btn,
+.todo-item.editing .todo-del-btn { opacity: 0 !important; pointer-events: none !important; }
+
+/* Inline edit input */
+.todo-inline-edit {
+  flex: 1;
+  background: var(--surface3);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.855rem;
+  font-family: var(--font-serif);
+  outline: none;
+  padding: 0.2rem 0.5rem;
+  line-height: 1.55;
+  min-width: 0;
+}
+.todo-save-btn, .todo-cancel-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  font-weight: 700;
+}
+.todo-save-btn { color: var(--accent2); }
+.todo-save-btn:hover { background: var(--accent2-dim); }
+.todo-cancel-btn { color: var(--muted); }
+.todo-cancel-btn:hover { background: var(--surface3); }
+
+/* Done separator */
+.done-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.75rem;
+  margin: 0.4rem 0 0.1rem;
+}
+.done-divider-line { flex: 1; height: 1px; background: var(--border); }
+.done-divider-label { font-family: var(--font-mono); font-size: 0.62rem; color: var(--muted); white-space: nowrap; }
+
+/* Add todo row */
+.add-todo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.3rem;
+}
+.add-todo-row .add-icon {
+  width: 17px; height: 17px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+.add-todo-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed var(--border2);
+  color: var(--text);
+  font-size: 0.855rem;
+  font-family: var(--font-serif);
+  outline: none;
+  padding: 0.2rem 0;
+  transition: border-color 0.15s;
+}
+.add-todo-input:focus { border-color: var(--accent); }
+.add-todo-input::placeholder { color: var(--muted); }
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted);
+}
+.empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+.empty-text { font-size: 0.85rem; }
+
+/* ── Modals ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.12s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Theme Settings Modal Specific Styles */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close-btn:hover {
+  color: var(--text);
+  background: var(--surface2);
+}
+.modal-close-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.setting-group {
+  margin-bottom: 1.5rem;
+}
+.setting-group h3 {
+  font-size: 0.9rem;
+  color: var(--text2);
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.theme-mode-selector {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.theme-mode-btn {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+}
+.theme-mode-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.theme-mode-btn.selected {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+.theme-mode-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.accent-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.accent-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.accent-picker .theme-dot {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0;
+  height: 40px;
+  width: 100%;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.accent-picker .theme-dot:hover {
+  border-color: var(--border2);
+  transform: translateX(2px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.accent-picker .theme-dot.selected {
+  border-color: var(--text);
+  box-shadow: 0 0 0 1px var(--text);
+}
+
+.accent-swatch {
+  width: 56px;
+  min-width: 56px;
+  height: 100%;
+  display: block;
+  flex-shrink: 0;
+}
+
+.accent-name {
+  color: var(--text2);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0 0.75rem;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  width: 420px;
+  max-width: 90vw;
+  animation: slideUp 0.15s ease;
+}
+@keyframes slideUp { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text); }
+.modal label { display: block; font-size: 0.78rem; color: var(--text2); margin-bottom: 0.35rem; margin-top: 0.75rem; }
+.modal label:first-of-type { margin-top: 0; }
+.modal input, .modal textarea, .modal select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 0.5rem 0.7rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-family: var(--font-serif);
+  outline: none;
+  transition: border 0.15s;
+}
+.modal input:focus, .modal textarea:focus, .modal select:focus { border-color: var(--accent); }
+.modal textarea { resize: vertical; min-height: 80px; }
+.modal-actions { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 1.25rem; }
+.btn-cancel {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  cursor: pointer;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-family: var(--font-serif);
+}
+.btn-cancel:hover { background: var(--surface3); }
+.btn-confirm {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: #0f0f11;
+  cursor: pointer;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-family: var(--font-serif);
+  font-weight: 600;
+}
+.btn-confirm:hover { opacity: 0.85; }
+.btn-danger-confirm {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+.modal .emoji-picker { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
+.emoji-btn {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  transition: all 0.1s;
+}
+.emoji-btn:hover { border-color: var(--accent); background: var(--accent-dim); }
+.emoji-btn.selected { border-color: var(--accent); background: var(--accent-dim); }
+
+/* Progress bar */
+.progress-wrap { height: 2px; background: var(--border); flex-shrink: 0; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 0.4s ease; }
+
+/* Sync status */
+.sync-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+}
+.sync-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.sync-dot.ok     { background: var(--accent2); }
+.sync-dot.saving { background: var(--accent); animation: pulse 0.8s infinite; }
+.sync-dot.error  { background: var(--danger); }
+.sync-dot.local  { background: var(--muted); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.sync-label {
+  font-family: var(--font-mono);
+  font-size: 0.63rem;
+  color: var(--muted);
+  flex: 1;
+}
+.sync-settings-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.25rem;
+  border-radius: 3px;
+  line-height: 1;
+  transition: color 0.12s;
+}
+.sync-settings-btn:hover { color: var(--text2); }
+
+/* Setup modal special styles */
+.setup-hero {
+  text-align: center;
+  padding: 0.5rem 0 1rem;
+}
+.setup-hero-icon { font-size: 2.2rem; margin-bottom: 0.5rem; }
+.setup-hero-title { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+.setup-hero-sub { font-size: 0.78rem; color: var(--text2); margin-top: 0.3rem; line-height: 1.5; }
+.setup-steps {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  counter-reset: step;
+}
+.setup-step {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  font-size: 0.78rem;
+  color: var(--text2);
+  line-height: 1.55;
+  margin-bottom: 0.5rem;
+}
+.setup-step:last-child { margin-bottom: 0; }
+.setup-step-num {
+  width: 18px; height: 18px; min-width: 18px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-dim);
+  color: var(--accent);
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  margin-top: 1px;
+}
+.setup-step a { color: var(--accent); text-decoration: none; }
+.setup-step a:hover { text-decoration: underline; }
+.token-input-wrap { position: relative; }
+.token-input-wrap input { padding-right: 2.5rem; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.02em; }
+.token-toggle {
+  position: absolute;
+  right: 0.5rem; top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.2rem;
+}
+.token-toggle:hover { color: var(--text2); }
+.setup-error {
+  font-size: 0.75rem;
+  color: var(--danger);
+  margin-top: 0.5rem;
+  min-height: 1rem;
+}
+.btn-confirm.loading { opacity: 0.6; cursor: not-allowed; }
+
+
+/* ── Priority dot ── */
+.pri-icon { 
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  cursor: pointer; 
+  flex-shrink: 0; 
+  transition: transform 0.15s; 
+}
+.pri-icon:hover { transform: scale(1.2); }
+.pri-icon.high   { color: var(--danger); }
+.pri-icon.medium { color: var(--accent); }
+.pri-icon.normal { color: transparent; }
+
+/* ── Todo main ── */
+.todo-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+.todo-meta { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+
+/* ── Due date badge ── */
+.due-badge { font-family: var(--font-mono); font-size: 0.6rem; padding: 0.08rem 0.38rem; border-radius: 10px; border: 1px solid var(--border2); background: var(--surface3); color: var(--text2); white-space: nowrap; }
+.due-badge.overdue { background: rgba(232,92,92,0.1); color: #e85c5c; border-color: rgba(232,92,92,0.3); }
+.due-badge.today   { background: rgba(232,144,69,0.12); color: #e89045; border-color: rgba(232,144,69,0.3); }
+.due-badge.soon    { background: var(--accent-dim); color: var(--accent); border-color: var(--accent-dim); }
+
+/* ── Tag chip on item ── */
+.tag-chip { font-family: var(--font-mono); font-size: 0.6rem; padding: 0.08rem 0.38rem; border-radius: 10px; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); cursor: pointer; transition: all 0.1s; }
+.tag-chip:hover { color: var(--accent); border-color: var(--accent-dim); }
+
+/* ── Drag handle for todos ── */
+.todo-drag-handle { color: var(--muted); font-size: 0.78rem; opacity: 0; transition: opacity 0.12s; cursor: grab; flex-shrink: 0; line-height: 1; padding: 0 1px; }
+.todo-item:hover .todo-drag-handle { opacity: 1; }
+
+/* ── Drag handle for cats ── */
+.cat-drag-handle { color: var(--muted); font-size: 0.75rem; opacity: 0; transition: opacity 0.12s; cursor: grab; flex-shrink: 0; }
+.cat-nav-item:hover .cat-drag-handle { opacity: 1; }
+.cat-nav-label-input { flex: 1; background: var(--surface3); border: 1px solid var(--accent); border-radius: 3px; color: var(--text); font-size: 0.82rem; font-family: var(--font-serif); outline: none; padding: 0.1rem 0.35rem; min-width: 0; }
+.cat-nav-item.drag-over-top { border-top: 2px solid var(--accent); }
+.cat-nav-item.drag-over-bottom { border-bottom: 2px solid var(--accent); }
+
+/* ── Section header drop ── */
+.section-header.drag-over { background: var(--accent-dim); outline: 1px dashed var(--accent-dim); }
+
+/* ── Todo drag states ── */
+.todo-item.dragging { opacity: 0.3; }
+.todo-item.drag-over-top { border-top: 2px solid var(--accent); }
+.todo-item.drag-over-bottom { border-bottom: 2px solid var(--accent); }
+
+/* ── Completion animation ── */
+@keyframes checkPop { 0%{transform:scale(1)} 35%{transform:scale(1.28)} 65%{transform:scale(0.9)} 100%{transform:scale(1)} }
+.todo-item.completing .checkbox { animation: checkPop 0.35s ease; }
+
+/* ── Priority modal buttons ── */
+.priority-selector { display: flex; gap: 0.5rem; margin-top: 0.35rem; }
+.pri-btn { flex: 1; padding: 0.42rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: var(--surface2); cursor: pointer; font-size: 0.78rem; text-align: center; transition: all 0.12s; color: var(--text2); font-family: var(--font-serif); }
+.pri-btn.sel-high   { background: rgba(232,92,92,0.12); border-color: #e85c5c; color: #e85c5c; }
+.pri-btn.sel-medium { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.pri-btn.sel-normal { background: var(--surface3); border-color: var(--border2); color: var(--text2); }
+
+/* ── Sidebar tag filter ── */
+.tag-filter-section { padding: 0.5rem 1rem; border-top: 1px solid var(--border); flex-shrink: 0; }
+.tag-filter-header { font-family: var(--font-mono); font-size: 0.62rem; color: var(--muted); margin-bottom: 0.35rem; display: flex; justify-content: space-between; align-items: center; }
+.tag-filter-clear { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.65rem; }
+.tag-filter-clear:hover { color: var(--accent); }
+.tag-chips-wrap { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.tag-chip-nav { font-family: var(--font-mono); font-size: 0.65rem; padding: 0.15rem 0.45rem; border-radius: 10px; background: var(--surface2); border: 1px solid var(--border2); color: var(--text2); cursor: pointer; transition: all 0.12s; }
+.tag-chip-nav:hover { border-color: var(--accent); color: var(--accent); }
+.tag-chip-nav.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+/* ── Important star ── */
+.star-btn {
+  background: none; border: none; cursor: pointer; flex-shrink: 0;
+  font-size: 1rem; line-height: 1; padding: 0.1rem 0.15rem;
+  color: var(--border2); transition: color 0.15s, transform 0.15s;
+  opacity: 0;
+}
+.todo-item:hover .star-btn { opacity: 1; }
+.star-btn.starred { color: #f5c518; opacity: 1; }
+.star-btn:hover { transform: scale(1.2); color: #f5c518; }
+.todo-item.important-item { border-left: 2px solid #f5c518; padding-left: calc(0.75rem - 2px); }
+
+/* ── My Day badge ── */
+.myday-badge { font-family: var(--font-mono); font-size: 0.58rem; padding: 0.08rem 0.42rem; border-radius: 10px; background: rgba(255,200,80,0.12); color: #f5a623; border: 1px solid rgba(245,166,35,0.25); white-space: nowrap; cursor: default; user-select: none; }
+
+/* ── Smart views in sidebar ── */
+.cat-nav-item.smart-group { margin-bottom: 4px; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+.cat-nav-item.smart-item { }
+
+/* ── Context Menu ── */
+.ctx-menu {
+  position: fixed; z-index: 9999;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+  padding: 0.3rem 0;
+  min-width: 180px;
+  animation: ctx-pop 0.1s ease;
+}
+@keyframes ctx-pop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.ctx-item {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.82rem; color: var(--text2);
+  cursor: pointer; transition: background 0.1s;
+  user-select: none;
+}
+.ctx-item:hover { background: var(--surface2); color: var(--text); }
+.ctx-item.active-flag { color: var(--accent); }
+.ctx-item.active-flag:hover { background: var(--accent-dim); }
+.ctx-item.danger { color: var(--danger); }
+.ctx-item.danger:hover { background: var(--danger-dim); }
+.ctx-divider { height: 1px; background: var(--border); margin: 0.25rem 0; }
+.ctx-icon { width: 1.1rem; text-align: center; flex-shrink: 0; }
+
+/* ── Repeat badge ── */
+.repeat-badge { font-family: var(--font-mono); font-size: 0.58rem; padding: 0.08rem 0.42rem; border-radius: 10px; background: var(--accent2-dim); color: var(--accent2); border: 1px solid var(--accent2-dim); white-space: nowrap; cursor: default; user-select: none; }
+
+/* ── Archive section in sidebar ── */
+.cat-nav-item.archive-item { border-top: 1px solid var(--border); margin-top: 0.4rem; padding-top: 0.6rem; }
+.archive-meta { font-family: var(--font-mono); font-size: 0.62rem; color: var(--muted); padding: 0.3rem 1rem 0.3rem 2.5rem; }
+.archive-restore-btn { display: none; background: none; border: none; color: var(--accent2); cursor: pointer; font-size: 0.68rem; padding: 0.1rem 0.3rem; border-radius: 3px; flex-shrink: 0; }
+.todo-item:hover .archive-restore-btn { display: block; }
+.archive-restore-btn:hover { background: var(--accent2-dim); }
+.archive-empty { text-align: center; padding: 2rem 1rem; color: var(--muted); font-size: 0.82rem; }
+
+/* ── Toast ── */
+.toast-container { position: fixed; bottom: 1.75rem; left: 50%; transform: translateX(-50%); z-index: 3000; pointer-events: none; }
+.toast { display: flex; align-items: center; gap: 0.75rem; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 0.6rem 0.9rem 0.75rem; font-size: 0.82rem; color: var(--text); box-shadow: 0 6px 24px rgba(0,0,0,0.4); pointer-events: auto; min-width: 230px; max-width: 380px; transform: translateY(14px); opacity: 0; transition: transform 0.22s ease, opacity 0.22s ease; position: relative; overflow: hidden; }
+.toast.visible { transform: translateY(0); opacity: 1; }
+.toast-msg { flex: 1; line-height: 1.4; }
+.toast-undo-btn { background: none; border: 1px solid var(--accent); color: var(--accent); cursor: pointer; font-size: 0.73rem; padding: 0.22rem 0.6rem; border-radius: var(--radius-sm); font-family: var(--font-serif); white-space: nowrap; flex-shrink: 0; transition: background 0.12s; }
+.toast-undo-btn:hover { background: var(--accent-dim); }
+.toast-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); width: 100%; transform-origin: left; animation: toast-shrink var(--toast-dur, 4500ms) linear forwards; }
+@keyframes toast-shrink { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+/* ── Active tag pill in toolbar ── */
+.active-tag-pill { display: flex; align-items: center; gap: 0.35rem; background: var(--accent-dim); border: 1px solid var(--accent-dim); border-radius: 20px; padding: 0.2rem 0.55rem; font-size: 0.68rem; color: var(--accent); font-family: var(--font-mono); }
+.active-tag-pill button { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.68rem; padding: 0; line-height: 1; }
+
+/* ── Shortcuts modal ── */
+.shortcut-grid { display: grid; grid-template-columns: auto 1fr; gap: 0.45rem 1rem; align-items: center; }
+.shortcut-grid hr { grid-column: 1/-1; border: none; border-top: 1px solid var(--border); margin: 0.2rem 0; }
+.shortcut-section { grid-column: 1/-1; font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.4rem; }
+kbd { background: var(--surface3); border: 1px solid var(--border2); border-radius: 4px; padding: 0.12rem 0.4rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text2); white-space: nowrap; }
+.shortcut-desc { font-size: 0.78rem; color: var(--text2); }
+
+/* ── Themes ── */
+
+.theme-picker { display: flex; align-items: center; gap: 0.35rem; }
+.theme-dot { width: 16px; height: 16px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.15s; flex-shrink: 0; }
+.theme-dot.active { border-color: var(--text); box-shadow: 0 0 0 2px var(--bg); }
+.theme-dot-dark   { background: linear-gradient(135deg, #0f0f11 50%, #e8c547 50%); }
+.theme-dot-slate  { background: linear-gradient(135deg, #0d1117 50%, #58a6ff 50%); }
+.theme-dot-rose   { background: linear-gradient(135deg, #0f0a0b 50%, #f97583 50%); }
+.theme-dot-forest { background: linear-gradient(135deg, #0b0f0b 50%, #73c991 50%); }
+.theme-dot-ocean  { background: linear-gradient(135deg, #070f16 50%, #38bdf8 50%); }
+.theme-dot-sand   { background: linear-gradient(135deg, #1a1510 50%, #e8a547 50%); }
+
+/* ── Themes ── */
+body.theme-dark   { --bg:#0f0f11;--surface:#18181c;--surface2:#1e1e24;--surface3:#222228;--border:#2a2a34;--border2:#33333f;--accent:#e8c547;--accent-dim:rgba(232,197,71,0.12);--accent2:#5ce6a4;--accent2-dim:rgba(92,230,164,0.1);--text:#e8e8f0;--text2:#a0a0b8;--muted:#55556a; }
+body.theme-slate  { --bg:#0d1117;--surface:#161b22;--surface2:#1c2128;--surface3:#21262d;--border:#30363d;--border2:#3d444d;--accent:#58a6ff;--accent-dim:rgba(88,166,255,0.12);--accent2:#3fb950;--accent2-dim:rgba(63,185,80,0.1);--text:#e6edf3;--text2:#8b949e;--muted:#484f58; }
+body.theme-rose   { --bg:#120a0c;--surface:#1c1013;--surface2:#22161a;--surface3:#281c20;--border:#3a2530;--border2:#48303d;--accent:#f97583;--accent-dim:rgba(249,117,131,0.12);--accent2:#56d364;--accent2-dim:rgba(86,211,100,0.1);--text:#ffdce0;--text2:#c49aa5;--muted:#6e4a55; }
+body.theme-forest { --bg:#0a0f0a;--surface:#131a13;--surface2:#192019;--surface3:#1e271e;--border:#2a3a2a;--border2:#344534;--accent:#73c991;--accent-dim:rgba(115,201,145,0.12);--accent2:#e3b341;--accent2-dim:rgba(227,179,65,0.1);--text:#d4f0d4;--text2:#88aa88;--muted:#4a6a4a; }
+body.theme-ocean  { --bg:#070e16;--surface:#0d1825;--surface2:#121f2e;--surface3:#162538;--border:#1e3245;--border2:#254055;--accent:#38bdf8;--accent-dim:rgba(56,189,248,0.12);--accent2:#a78bfa;--accent2-dim:rgba(167,139,250,0.1);--text:#e0f2fe;--text2:#7aadc8;--muted:#3d6280; }
+body.theme-sand   { --bg:#1a1510;--surface:#221d17;--surface2:#28231c;--surface3:#2e2820;--border:#3d3528;--border2:#4d4333;--accent:#e8a547;--accent-dim:rgba(232,165,71,0.12);--accent2:#5ce6c4;--accent2-dim:rgba(92,230,196,0.1);--text:#f0e8d8;--text2:#b8a888;--muted:#6a5a48; }
+
+/* Theme Settings Modal Styles */
+
+.accent-name {
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.theme-picker { display:flex; align-items:center; gap:0.3rem; margin-top:0.5rem; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border2); }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .sidebar { width: 200px; min-width: 200px; }
+  .cat-nav-label { font-size: 0.76rem; }
+}
+@media (max-width: 480px) {
+  .app { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; min-width: unset; border-right: none; border-bottom: 1px solid var(--border); }
+  .sidebar-cats { max-height: 140px; display: flex; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 0.3rem 0.5rem; }
+  .cat-nav-item { flex-direction: column; gap: 0.2rem; padding: 0.4rem 0.6rem; border-radius: var(--radius-sm); min-width: fit-content; }
+  .cat-nav-item.all-item { border-bottom: none; margin-bottom: 0; border-right: 1px solid var(--border); padding-right: 0.8rem; margin-right: 0.3rem; }
+  .cat-nav-del { display: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1>📋 Todo 清单</h1>
+      <div class="sidebar-stats" id="stats">加载中...</div>
+      <div class="sync-row">
+          <span class="sync-dot" id="sync-dot"></span>
+          <span class="sync-label" id="sync-label">本地存储</span>
+          <button class="sync-settings-btn" id="open-theme-modal-btn" title="主题设置">🎨</button>
+          <button class="sync-settings-btn" onclick="openSetupModal()" title="同步设置">⚙️</button>
+        </div>
+
+    </div>
+    <div class="sidebar-cats" id="sidebar-cats">
+      <!-- smart views rendered here by JS -->
+    </div>
+    <div class="tag-filter-section" id="tag-filter-section" style="display:none"></div>
+    <div class="sidebar-add-cat">
+      <div class="add-cat-form">
+        <input type="text" id="new-cat-input" placeholder="新分类名称..." maxlength="20">
+        <button class="btn-add-cat" onclick="openAddCatModal()">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="toolbar">
+      <div class="toolbar-title">
+        <span class="icon" id="toolbar-icon">📋</span>
+        <span id="toolbar-title">全部</span>
+      </div>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="搜索..." oninput="render()">
+      </div>
+      <div id="active-tag-pill" style="display:none"></div>
+      <div class="toolbar-actions">
+        <button class="btn-icon" id="sort-btn" onclick="cycleSortOrder()">↕ <span id="sort-label">手动</span></button>
+        <button class="btn-icon" id="toggle-done-btn" onclick="toggleShowDone()">隐藏已完成</button>
+        <button class="btn-icon" onclick="archiveCompleted()" title="将所有已完成任务移入归档">📦 归档完成</button>
+        <button class="btn-icon" onclick="exportJSON()" title="导出备份">⬇ 导出</button>
+        <button class="btn-icon" onclick="document.getElementById('import-file').click()" title="导入数据">⬆ 导入</button>
+        <button class="btn-icon" onclick="openShortcutsModal()" title="快捷键 (?)">⌨ 快捷键</button>
+        <button class="btn-primary" onclick="openAddTodoModal()">+ 新任务</button>
+      </div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+    <div class="todo-area" id="todo-area"></div>
+  </div>
+</div>
+
+<!-- Modal: Add/Edit Category -->
+<div class="modal-overlay" id="cat-modal" style="display:none">
+  <div class="modal">
+    <h2 id="cat-modal-title">添加分类</h2>
+    <label>分类名称</label>
+    <input type="text" id="cat-name-input" placeholder="例：工作、购物..." maxlength="20">
+    <label>选择图标</label>
+    <div class="emoji-picker" id="emoji-picker"></div>
+    <input type="hidden" id="cat-icon-input" value="📌">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeCatModal()">取消</button>
+      <button class="btn-confirm" onclick="saveCat()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add/Edit Todo -->
+<div class="modal-overlay" id="todo-modal" style="display:none">
+  <div class="modal">
+    <h2 id="todo-modal-title">添加任务</h2>
+    <label>任务内容</label>
+    <textarea id="todo-text-input" placeholder="输入任务描述..." rows="2"></textarea>
+    <label>分类</label>
+    <select id="todo-cat-select"></select>
+    <label>优先级</label>
+    <div class="priority-selector">
+      <button class="pri-btn" id="pri-high" onclick="selectModalPri('high')">🔴 高</button>
+      <button class="pri-btn" id="pri-medium" onclick="selectModalPri('medium')">🟡 中</button>
+      <button class="pri-btn sel-normal" id="pri-normal" onclick="selectModalPri('normal')">⚪ 普通</button>
+    </div>
+    <label>重复</label>
+    <select id="todo-repeat-input">
+      <option value="">不重复</option>
+      <option value="daily">每天</option>
+      <option value="weekly">每周</option>
+      <option value="monthly">每月</option>
+    </select>
+    <label>截止日期 <span style="color:var(--muted);font-weight:400">（可选）</span></label>
+    <input type="date" id="todo-due-input">
+    <label>标签 <span style="color:var(--muted);font-weight:400">（空格分隔，如：急 等待回复）</span></label>
+    <input type="text" id="todo-tags-input" placeholder="#急 #等待">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeTodoModal()">取消</button>
+      <button class="btn-confirm" onclick="saveTodo()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Confirm Delete -->
+<div class="modal-overlay" id="del-modal" style="display:none">
+  <div class="modal">
+    <h2>确认删除</h2>
+    <p style="font-size:0.85rem;color:var(--text2);line-height:1.6;" id="del-msg"></p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeDelModal()">取消</button>
+      <button class="btn-confirm btn-danger-confirm" onclick="confirmDel()">删除</button>
+    </div>
+  </div>
+</div>
+
+
+<input type="file" id="import-file" accept=".json" style="display:none" onchange="importJSON(event)">
+
+<!-- Modal: Theme Settings -->
+<div class="modal-overlay" id="theme-settings-modal" style="display:none">
+  <div class="modal" style="width:400px">
+    <div class="modal-header">
+  <h2>主题设置</h2>
+  <button class="modal-close-btn" onclick="closeThemeSettingsModal()" title="关闭">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+</div>
+<div class="modal-content">
+  <div class="setting-group">
+    <h3>基础模式</h3>
+    <div class="theme-mode-selector">
+      <button class="theme-mode-btn" id="base-theme-dark" data-theme="dark" title="切换到深色模式">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <span>深色模式</span>
+      </button>
+      <button class="theme-mode-btn" id="base-theme-light" data-theme="light" title="切换到浅色模式">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <span>浅色模式</span>
+      </button>
+      <button class="theme-mode-btn" id="base-theme-brown" data-theme="brown" title="切换到棕色模式">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-leaf">
+          <path d="M11 20A7 7 0 0 1 9.86 6.47c-.91-2.15-3.62-3.3-6.17-2.84a1.5 1.5 0 0 0-1.03 1.03c-.46 2.55.69 5.26 2.84 6.17A7 7 0 0 1 11 20z"/>
+          <path d="M18.83 9.06c.3-4.56-2.6-7.65-7.3-8.8-2.5.72-2.97 2.9-2.13 4.95a7 7 0 0 0 5.8 8.64c2.3.64 4.45-.4 5.2-2.6Z"/>
+        </svg>
+        <span>棕色模式</span>
+      </button>
+    </div>
+  </div>
+
+      <div class="setting-group" style="margin-top: 1.5rem;">
+        <h3>主题色</h3>
+        <div class="accent-picker" id="accent-picker">
+          <!-- Accent color dots will be dynamically inserted here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Keyboard Shortcuts -->
+<div class="modal-overlay" id="shortcuts-modal" style="display:none">
+  <div class="modal">
+    <h2>⌨ 快捷键</h2>
+    <div class="shortcut-grid">
+      <span class="shortcut-section">任务操作</span>
+      <kbd>双击文字</kbd><span class="shortcut-desc">内联编辑任务内容</span>
+      <kbd>Enter</kbd><span class="shortcut-desc">保存编辑</span>
+      <kbd>Esc</kbd><span class="shortcut-desc">取消编辑 / 关闭弹窗</span>
+      <kbd>点优先级点</kbd><span class="shortcut-desc">循环切换优先级 🔴→🟡→⚪</span>
+      <hr>
+      <span class="shortcut-section">分类</span>
+      <kbd>双击分类名</kbd><span class="shortcut-desc">内联重命名分类</span>
+      <kbd>拖拽侧边栏分类</kbd><span class="shortcut-desc">调整分类排序</span>
+      <hr>
+      <span class="shortcut-section">拖拽</span>
+      <kbd>拖拽任务</kbd><span class="shortcut-desc">同分类内上下排序</span>
+      <kbd>拖到分类标题</kbd><span class="shortcut-desc">跨分类移动任务</span>
+      <hr>
+      <span class="shortcut-section">全局</span>
+      <kbd>/</kbd><span class="shortcut-desc">聚焦搜索框</span>
+      <kbd>Ctrl K</kbd><span class="shortcut-desc">聚焦搜索框</span>
+      <kbd>?</kbd><span class="shortcut-desc">显示此面板</span>
+    </div>
+    <div class="modal-actions"><button class="btn-confirm" onclick="closeShortcutsModal()">知道了</button></div>
+  </div>
+</div>
+
+<!-- Modal: GitHub Gist Setup -->
+<div class="modal-overlay" id="setup-modal" style="display:none">
+  <div class="modal" style="width:480px">
+    <div class="setup-hero">
+      <div class="setup-hero-icon">🐙</div>
+      <div class="setup-hero-title">连接 GitHub Gist</div>
+      <div class="setup-hero-sub">数据将加密存储在你的私有 Gist 中<br>任何设备打开都能自动同步</div>
+    </div>
+    <div class="setup-steps">
+      <div class="setup-step">
+        <span class="setup-step-num">1</span>
+        <span>打开 <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a></span>
+      </div>
+      <div class="setup-step">
+        <span class="setup-step-num">2</span>
+        <span>选 <strong style="color:var(--text)">Tokens (classic)</strong>，勾选 <strong style="color:var(--text)">gist</strong> 权限，生成 Token</span>
+      </div>
+      <div class="setup-step">
+        <span class="setup-step-num">3</span>
+        <span>把 Token 粘贴到下面，点击连接</span>
+      </div>
+    </div>
+    <label>GitHub Personal Access Token</label>
+    <div class="token-input-wrap">
+      <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+      <button class="token-toggle" onclick="toggleTokenVisibility()" id="token-toggle-btn">👁</button>
+    </div>
+    <div id="setup-error" class="setup-error"></div>
+    <div class="modal-actions" style="margin-top:1rem">
+      <button class="btn-cancel" onclick="closeSetupModal()" id="setup-cancel-btn">取消</button>
+      <button class="btn-confirm" onclick="connectGist()" id="setup-confirm-btn">🔗 连接并同步</button>
+    </div>
+    <div style="margin-top:0.75rem;text-align:center">
+      <button onclick="disconnectGist()" style="background:none;border:none;color:var(--muted);font-size:0.72rem;cursor:pointer;font-family:var(--font-serif)" id="disconnect-btn">断开连接，仅用本地存储</button>
+    </div>
+  </div>
+</div>
+
+<div id="ctx-menu" class="ctx-menu" style="display:none"></div>
+<div id="toast-container" class="toast-container"></div>
+
+<script>
+// ── Constants ──────────────────────────────────────────────
+const DEFAULT_DATA = {
+  categories: [
+    { id:'work', icon:'💻', name:'工作' },
+    { id:'life', icon:'🌱', name:'生活' },
+    { id:'shopping', icon:'🛒', name:'购物' },
+    { id:'finance', icon:'💳', name:'财务' },
+    { id:'health', icon:'💊', name:'健康' },
+  ],
+  todos: [],
+  archive: []
+};
+const EMOJIS = ['📌','💳','🏠','📋','💰','📈','💊','🚗','🐱','💻','🌱','📦','🎯','🔧','📝','🎉','⭐','🔑','📱','🛒','✈️','🏋️','📚','💡','🍔','🏥','🎮','🌏','🏦','💼','🧹','🔒','📞','🎁','🌿','🛠️','🧾','🚀'];
+const LS_THEME = 'todo_theme', LS_ACCENT = 'todo_accent';
+const SORT_LABELS = { manual:'手动', priority:'优先级', due:'截止日期' };
+
+// ── App State ──────────────────────────────────────────────
+let state, activeCat='all', showDone=true, collapsed={}, currentTheme = 'dark', currentAccent = 'default', sortOrder='manual', filterTag=null;
+let editingCatId=null, editingTodoId=null, modalPriority='normal';
+let pendingDelType=null, pendingDelId=null;
+
+// ── Gist Sync ──────────────────────────────────────────────
+const LS_TOKEN='gh_todo_token', LS_GIST_ID='gh_todo_gist_id', LS_CACHE='todo_app_v4', GIST_FILE='todo-data.json';
+let ghToken=localStorage.getItem(LS_TOKEN)||'', gistId=localStorage.getItem(LS_GIST_ID)||'', syncTimer=null;
+
+function setSyncStatus(t,l){const d=document.getElementById('sync-dot'),lb=document.getElementById('sync-label');if(!d)return;d.className='sync-dot '+t;lb.textContent=l}
+async function loadState(){let c=null;try{c=JSON.parse(localStorage.getItem(LS_CACHE))}catch(e){}
+  if(ghToken&&gistId){setSyncStatus('saving','同步中...');try{const r=await fetch('https://api.github.com/gists/'+gistId,{headers:{Authorization:'token '+ghToken,Accept:'application/vnd.github.v3+json'}});if(!r.ok)throw new Error(r.status);const g=await r.json();const raw=g.files?.[GIST_FILE]?.content;if(raw){const d=JSON.parse(raw);localStorage.setItem(LS_CACHE,raw);setSyncStatus('ok','已同步 · Gist');return d}}catch(e){setSyncStatus('error','同步失败，使用本地缓存')}return c||JSON.parse(JSON.stringify(DEFAULT_DATA))}
+  setSyncStatus('local','本地存储');return c||JSON.parse(JSON.stringify(DEFAULT_DATA))}
+function saveState(){localStorage.setItem(LS_CACHE,JSON.stringify(state));if(!ghToken||!gistId)return;clearTimeout(syncTimer);setSyncStatus('saving','保存中...');syncTimer=setTimeout(pushToGist,1200)}
+async function pushToGist(){if(!ghToken||!gistId)return;try{const r=await fetch('https://api.github.com/gists/'+gistId,{method:'PATCH',headers:{Authorization:'token '+ghToken,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({files:{[GIST_FILE]:{content:JSON.stringify(state,null,2)}}})});if(!r.ok)throw new Error(r.status);setSyncStatus('ok','已同步 '+new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}))}catch(e){setSyncStatus('error','同步失败，将重试');setTimeout(pushToGist,5000)}}
+
+function openSetupModal(){const i=document.getElementById('gh-token-input');i.value=ghToken;i.type='password';document.getElementById('token-toggle-btn').textContent='👁';document.getElementById('setup-error').textContent='';document.getElementById('disconnect-btn').style.display=ghToken?'inline':'none';document.getElementById('setup-modal').style.display='flex';setTimeout(()=>i.focus(),50)}
+function closeSetupModal(){document.getElementById('setup-modal').style.display='none'}
+function toggleTokenVisibility(){const i=document.getElementById('gh-token-input'),b=document.getElementById('token-toggle-btn');i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'👁':'🙈'}
+async function connectGist(){const token=document.getElementById('gh-token-input').value.trim(),errEl=document.getElementById('setup-error'),btn=document.getElementById('setup-confirm-btn');errEl.textContent='';if(!token){errEl.textContent='请输入 Token';return}btn.textContent='连接中...';btn.classList.add('loading');btn.disabled=true;
+  try{const ur=await fetch('https://api.github.com/user',{headers:{Authorization:'token '+token,Accept:'application/vnd.github.v3+json'}});if(!ur.ok)throw new Error('Token 无效，请检查权限');const user=await ur.json();let existId=gistId;
+  if(!existId){const gr=await fetch('https://api.github.com/gists?per_page=100',{headers:{Authorization:'token '+token,Accept:'application/vnd.github.v3+json'}});const gs=await gr.json();const f=gs.find(g=>g.files?.[GIST_FILE]);if(f)existId=f.id}
+  if(existId){const gr=await(await fetch('https://api.github.com/gists/'+existId,{headers:{Authorization:'token '+token,Accept:'application/vnd.github.v3+json'}})).json();const raw=gr.files?.[GIST_FILE]?.content;if(raw){state=JSON.parse(raw);localStorage.setItem(LS_CACHE,raw)}gistId=existId}
+  else{const cr=await fetch('https://api.github.com/gists',{method:'POST',headers:{Authorization:'token '+token,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({description:'Todo App Data',public:false,files:{[GIST_FILE]:{content:JSON.stringify(state,null,2)}}})});if(!cr.ok)throw new Error('创建 Gist 失败，请确认 gist 权限');gistId=(await cr.json()).id}
+  ghToken=token;localStorage.setItem(LS_TOKEN,token);localStorage.setItem(LS_GIST_ID,gistId);closeSetupModal();setSyncStatus('ok','已连接 @'+user.login);render()}catch(e){errEl.textContent=e.message||'连接失败'}finally{btn.textContent='🔗 连接并同步';btn.classList.remove('loading');btn.disabled=false}}
+function disconnectGist(){if(!confirm('断开后数据只保存本地，不会删除 Gist 数据。确认？'))return;ghToken='';gistId='';localStorage.removeItem(LS_TOKEN);localStorage.removeItem(LS_GIST_ID);closeSetupModal();setSyncStatus('local','本地存储')}
+
+// ── Helpers ────────────────────────────────────────────────
+function genId(){return Math.random().toString(36).substr(2,9)+Date.now().toString(36)}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function today(){ return new Date().toISOString().slice(0,10) }
+function normTodo(t){
+  if(!t.priority)t.priority='normal';
+  if(!t.tags)t.tags=[];
+  if(!('dueDate'in t))t.dueDate=null;
+  if(!('repeat'in t))t.repeat='';
+  if(!('lastResetDate'in t))t.lastResetDate=null;
+  if(!('important'in t))t.important=false;
+  if(!('myDay'in t))t.myDay=null;
+  return t
+}
+function normState(s){if(!s.archive)s.archive=[];s.todos.forEach(normTodo);return s}
+function parseTags(s){return s.split(/[\s,]+/).map(t=>t.replace(/^#/,'')).filter(Boolean)}
+function formatDue(iso){if(!iso)return null;const due=new Date(iso+'T00:00:00'),now=new Date();now.setHours(0,0,0,0);const diff=Math.round((due-now)/86400000);const label=diff<0?'逾期'+(-diff)+'天':diff===0?'今天':diff===1?'明天':(due.getMonth()+1)+'/'+due.getDate();const cls=diff<0?'overdue':diff===0?'today':diff<=3?'soon':'';return{label,cls}}
+function allTags(){const s=new Set();state.todos.forEach(t=>(t.tags||[]).forEach(g=>s.add(g)));return[...s]}
+function applySortOrder(items){
+  const PRI_ORDER = { high:0, medium:1, normal:2 };
+  if(sortOrder==='priority')return[...items].sort((a,b)=>PRI_ORDER[a.priority||'normal']-PRI_ORDER[b.priority||'normal']);
+  if(sortOrder==='due')return[...items].sort((a,b)=>{if(!a.dueDate&&!b.dueDate)return 0;if(!a.dueDate)return 1;if(!b.dueDate)return -1;return a.dueDate.localeCompare(b.dueDate)});
+  return items}
+
+// ── Render Sidebar ─────────────────────────────────────────
+function renderSidebar(){
+  const el=document.getElementById('sidebar-cats');
+  const activeTodos=state.todos.filter(t=>!t.archived);
+  const allDone=activeTodos.filter(t=>t.done).length,allTotal=activeTodos.length;
+  const archiveCount=(state.archive||[]).length;
+  const myDayCount=activeTodos.filter(t=>t.myDay===today()&&!t.done).length;
+  const importantCount=activeTodos.filter(t=>t.important&&!t.done).length;
+
+  let html=`
+    <div class="cat-nav-item smart-item smart-group ${activeCat==='myday'?'active':''}" onclick="setActiveCat('myday')">
+      <span class="cat-nav-icon">☀️</span><span class="cat-nav-label">我的一天</span>
+      <span class="cat-nav-count">${myDayCount}</span></div>
+    <div class="cat-nav-item smart-item smart-group ${activeCat==='important'?'active':''}" onclick="setActiveCat('important')">
+      <span class="cat-nav-icon">⭐</span><span class="cat-nav-label">重要</span>
+      <span class="cat-nav-count">${importantCount}</span></div>
+    <div class="cat-nav-item all-item ${activeCat==='all'?'active':''}" onclick="setActiveCat('all')">
+      <span class="cat-nav-icon">📋</span><span class="cat-nav-label">全部</span>
+      <span class="cat-nav-count">${allDone}/${allTotal}</span></div>`;
+  state.categories.forEach(cat=>{
+    const tots=state.todos.filter(t=>t.cat===cat.id),done=tots.filter(t=>t.done).length;
+    html+=`<div class="cat-nav-item ${activeCat===cat.id?'active':''}" draggable="true" data-cat-id="${cat.id}"
+      onclick="setActiveCat('${cat.id}')" ondblclick="startCatRename('${cat.id}',event)">
+      <span class="cat-drag-handle">⠿</span>
+      <span class="cat-nav-icon">${cat.icon}</span>
+      <span class="cat-nav-label" data-rl="${cat.id}">${escHtml(cat.name)}</span>
+      <span class="cat-nav-count">${done}/${tots.length}</span>
+      <button class="cat-nav-del" onclick="event.stopPropagation();openDelCat('${cat.id}')">✕</button></div>`;
+  });
+  html+=`<div class="cat-nav-item archive-item ${activeCat==='archive'?'active':''}" onclick="setActiveCat('archive')">
+    <span class="cat-nav-icon">📦</span><span class="cat-nav-label">归档</span>
+    <span class="cat-nav-count">${archiveCount}</span></div>`;
+  el.innerHTML=html;
+  el.querySelectorAll('[data-cat-id]').forEach(item=>{
+    item.addEventListener('dragstart',catDragStart);item.addEventListener('dragover',catDragOver);
+    item.addEventListener('dragleave',catDragLeave);item.addEventListener('drop',catDrop);item.addEventListener('dragend',catDragEnd);
+  });
+  document.getElementById('stats').innerHTML='完成 <span>'+allDone+'</span> / '+allTotal;
+  document.getElementById('progress-bar').style.width=allTotal?(allDone/allTotal*100)+'%':'0%';
+  document.getElementById('toggle-done-btn').textContent=showDone?'隐藏已完成':'显示已完成';
+  document.getElementById('sort-label').textContent=SORT_LABELS[sortOrder];
+  // Tag filter
+  const tags=allTags(),tfSec=document.getElementById('tag-filter-section');
+  if(tags.length){tfSec.style.display='block';tfSec.innerHTML='<div class="tag-filter-header"><span>标签筛选</span>'+(filterTag?'<button class="tag-filter-clear" onclick="setFilterTag(null)">✕ 清除</button>':'')+'</div><div class="tag-chips-wrap">'+tags.map(tag=>`<span class="tag-chip-nav ${filterTag===tag?'active':''}" onclick="setFilterTag('${escHtml(tag)}')">#${escHtml(tag)}</span>`).join('')+'</div>'}
+  else tfSec.style.display='none';
+  // Active tag pill
+  const pill=document.getElementById('active-tag-pill');
+  pill.style.display=filterTag?'flex':'none';
+  if(filterTag)pill.innerHTML=`<div class="active-tag-pill">#${escHtml(filterTag)} <button onclick="setFilterTag(null)">✕</button></div>`;
+}
+
+// ── Render Main ────────────────────────────────────────────
+function render(){
+  renderSidebar();
+  const search=document.getElementById('search-input').value.trim().toLowerCase();
+  const area=document.getElementById('todo-area');
+
+  // Archive view
+  if(activeCat==='archive'){
+    document.getElementById('toolbar-icon').textContent='📦';
+    document.getElementById('toolbar-title').textContent='归档';
+    renderArchiveView(area,search);
+    return;
+  }
+
+  // Smart views
+  if(activeCat==='myday'){
+    document.getElementById('toolbar-icon').textContent='☀️';
+    document.getElementById('toolbar-title').textContent='我的一天';
+    renderSmartView(area,search,t=>t.myDay===today(),'我的一天还没有任务 — 右键任务选「加入我的一天」');
+    return;
+  }
+  if(activeCat==='important'){
+    document.getElementById('toolbar-icon').textContent='⭐';
+    document.getElementById('toolbar-title').textContent='重要';
+    renderSmartView(area,search,t=>t.important,'还没有重要任务 — 点击 ☆ 或右键标记为重要');
+    return;
+  }
+
+  if(activeCat==='all'){document.getElementById('toolbar-icon').textContent='📋';document.getElementById('toolbar-title').textContent='全部'}
+  else{const cat=state.categories.find(c=>c.id===activeCat);if(cat){document.getElementById('toolbar-icon').textContent=cat.icon;document.getElementById('toolbar-title').textContent=cat.name}}
+  const catsToShow=activeCat==='all'?state.categories:state.categories.filter(c=>c.id===activeCat);
+  let html='',anyVisible=false;
+  catsToShow.forEach(cat=>{
+    let items=state.todos.filter(t=>t.cat===cat.id).map(normTodo);
+    if(search)items=items.filter(t=>t.text.toLowerCase().includes(search)||(t.tags||[]).some(tag=>tag.toLowerCase().includes(search)));
+    if(filterTag)items=items.filter(t=>(t.tags||[]).includes(filterTag));
+    const undone=applySortOrder(items.filter(t=>!t.done)),done=items.filter(t=>t.done);
+    const hasVis=undone.length>0||(showDone&&done.length>0);
+    if(!hasVis&&(search||filterTag))return;
+    anyVisible=true;
+    html+=`<div class="section" data-cat="${cat.id}">`;
+    if(activeCat==='all'){
+      html+=`<div class="section-header" onclick="toggleCollapse('${cat.id}')"
+        ondragover="event.preventDefault();this.classList.add('drag-over')"
+        ondragleave="this.classList.remove('drag-over')"
+        ondrop="sectionDrop('${cat.id}',event)">
+        <span class="section-icon">${cat.icon}</span>
+        <span class="section-title">${escHtml(cat.name)}</span>
+        <span class="section-count">${done.length}/${items.length}</span>
+        <span class="section-caret ${collapsed[cat.id]?'collapsed':''}">▼</span></div>`;
+    }
+    html+=`<div class="section-items ${collapsed[cat.id]&&activeCat==='all'?'hidden':''}">`;
+    undone.forEach(item=>{html+=renderItem(item)});
+    if(!search&&!filterTag){html+=`<div class="add-todo-row"><span class="add-icon">+</span><input class="add-todo-input" placeholder="添加任务..." data-cat="${cat.id}" onkeydown="if(event.key==='Enter')addInlineTodo(this)"></div>`}
+    if(showDone&&done.length>0){
+      html+=`<div class="done-divider"><div class="done-divider-line"></div><span class="done-divider-label">已完成 ${done.length}</span><div class="done-divider-line"></div></div>`;
+      done.forEach(item=>{html+=renderItem(item)});
+    }
+    html+='</div></div>';
+  });
+  if(!anyVisible){html=`<div class="empty"><div class="empty-icon">${search||filterTag?'🔍':'📝'}</div><div class="empty-text">${search||filterTag?'没有匹配的任务':'这里还没有任务，点 + 新任务 开始'}</div></div>`}
+  area.innerHTML=html;
+  attachTodoDrag();
+}
+
+function renderSmartView(area,search,filterFn,emptyMsg){
+  let items=state.todos.map(normTodo).filter(filterFn);
+  if(search)items=items.filter(t=>t.text.toLowerCase().includes(search)||(t.tags||[]).some(tag=>tag.toLowerCase().includes(search)));
+  if(!items.length){area.innerHTML=`<div class="empty"><div class="empty-icon">✨</div><div class="empty-text">${emptyMsg}</div></div>`;return}
+  const undone=applySortOrder(items.filter(t=>!t.done)),done=items.filter(t=>t.done);
+  let html='<div class="section">';
+  // Group undone by category for context
+  const catMap={};
+  undone.forEach(t=>{if(!catMap[t.cat])catMap[t.cat]=[];catMap[t.cat].push(t)});
+  Object.keys(catMap).forEach(catId=>{
+    const cat=state.categories.find(c=>c.id===catId);
+    if(cat&&Object.keys(catMap).length>1) html+=`<div style="padding:0.3rem 0.75rem;font-size:0.7rem;color:var(--muted);font-family:var(--font-mono)">${cat.icon} ${escHtml(cat.name)}</div>`;
+    catMap[catId].forEach(item=>html+=renderItem(item,true));
+  });
+  if(showDone&&done.length>0){
+    html+=`<div class="done-divider"><div class="done-divider-line"></div><span class="done-divider-label">已完成 ${done.length}</span><div class="done-divider-line"></div></div>`;
+    done.forEach(item=>html+=renderItem(item,true));
+  }
+  html+='</div>';
+  area.innerHTML=html;
+  attachTodoDrag();
+}
+
+function renderItem(item, showCatHint=false){
+  const PRI_ICONS = { high: '▲', medium: '●', normal: ' ' };
+  const REPEAT_LABELS = { daily:'每天', weekly:'每周', monthly:'每月' };
+  const pri=item.priority||'normal',due=formatDue(item.dueDate),tags=item.tags||[];
+  const isMyDay=item.myDay===today();
+  const metaHtml=[
+    item.important?`<span style="font-size:0.62rem;color:#f5c518;font-family:var(--font-mono)">⭐ 重要</span>`:'',
+    isMyDay?`<span class="myday-badge">☀️ 我的一天</span>`:'',
+    item.repeat?`<span class="repeat-badge">🔁 ${REPEAT_LABELS[item.repeat]||item.repeat}</span>`:'',
+    due?`<span class="due-badge ${due.cls}">📅 ${due.label}</span>`:'',
+    ...tags.map(tag=>`<span class="tag-chip" onclick="event.stopPropagation();setFilterTag('${escHtml(tag)}')">#${escHtml(tag)}</span>`)
+  ].filter(Boolean).join('');
+  return `<div class="todo-item ${item.done?'done':''} ${item.important?'important-item':''}" draggable="true" data-id="${item.id}" data-cat="${item.cat}"
+    oncontextmenu="openCtxMenu(event,'${item.id}')">
+    <span class="todo-drag-handle">⠿</span>
+    <div class="checkbox" onclick="toggleTodo('${item.id}')"></div>
+    <span class="pri-icon ${pri}" onclick="cyclePriority('${item.id}')" title="点击切换优先级">${PRI_ICONS[pri]}</span>
+    <div class="todo-main">
+      <span class="todo-text" ondblclick="openInlineEdit('${item.id}')">${escHtml(item.text)}</span>
+      ${metaHtml?`<div class="todo-meta">${metaHtml}</div>`:''}
+    </div>
+    <div class="todo-actions">
+      <button class="star-btn ${item.important?'starred':''}" onclick="event.stopPropagation();toggleImportant('${item.id}')" title="${item.important?'取消重要':'标记为重要'}">${item.important?'⭐':'☆'}</button>
+      <button class="todo-edit-btn todo-act-btn" onclick="openEditTodoModal('${item.id}')" title="编辑">✏️</button>
+      <button class="todo-del-btn todo-act-btn del" onclick="deleteTodoDirect('${item.id}')" title="删除">✕</button>
+    </div></div>`;
+}
+
+// ── Actions ────────────────────────────────────────────────
+function setActiveCat(id){activeCat=id;render()}
+function toggleCollapse(id){collapsed[id]=!collapsed[id];render()}
+function setFilterTag(tag){filterTag=tag;render()}
+function toggleShowDone(){showDone=!showDone;render()}
+function cycleSortOrder(){const o=['manual','priority','due'];sortOrder=o[(o.indexOf(sortOrder)+1)%o.length];render()}
+
+function toggleTodo(id){
+  const t=state.todos.find(t=>t.id===id);if(!t)return;
+  const el=document.querySelector(`.todo-item[data-id="${id}"]`);
+  if(el)el.classList.add('completing');
+  const wasSnapshot=JSON.parse(JSON.stringify(t));
+  t.done=!t.done;
+  if(t.done && t.repeat){
+    t.lastResetDate=new Date().toISOString().slice(0,10);
+  }
+  saveState();
+  const msg=t.done?`✅ 已完成「${t.text.substring(0,20)}${t.text.length>20?'…':''}」`:`↩ 已恢复「${t.text.substring(0,20)}${t.text.length>20?'…':''}」`;
+  showToast(msg,()=>{
+    const curr=state.todos.find(x=>x.id===id);
+    if(curr){Object.assign(curr,{done:wasSnapshot.done,lastResetDate:wasSnapshot.lastResetDate});saveState();render()}
+  });
+  setTimeout(()=>render(),320);
+}
+
+// Direct delete with undo (no confirm dialog for single todos)
+function deleteTodoDirect(id){
+  const t=state.todos.find(t=>t.id===id);if(!t)return;
+  const snapshot=JSON.parse(JSON.stringify(t));
+  const idx=state.todos.findIndex(x=>x.id===id);
+  state.todos.splice(idx,1);
+  saveState();render();
+  showToast(`🗑 已删除「${snapshot.text.substring(0,20)}${snapshot.text.length>20?'…':''}」`,()=>{
+    state.todos.splice(idx,0,snapshot);saveState();render();
+  });
+}
+function toggleImportant(id){
+  const t=state.todos.find(t=>t.id===id);if(!t)return;
+  t.important=!t.important;
+  saveState();render();
+  showToast(t.important?'⭐ 已标记为重要':'已取消重要标记',()=>{
+    t.important=!t.important;saveState();render();
+  });
+}
+
+function toggleMyDay(id){
+  const t=state.todos.find(t=>t.id===id);if(!t)return;
+  const alreadyToday=t.myDay===today();
+  t.myDay=alreadyToday?null:today();
+  saveState();render();
+  showToast(t.myDay?'☀️ 已加入我的一天':'已从我的一天移除',()=>{
+    t.myDay=alreadyToday?today():null;saveState();render();
+  });
+}
+
+
+function cyclePriority(id){const t=state.todos.find(t=>t.id===id);if(!t)return;t.priority={normal:'high',high:'medium',medium:'normal'}[t.priority||'normal'];saveState();render()}
+function addInlineTodo(input){const text=input.value.trim();if(!text)return;state.todos.push({id:genId(),cat:input.dataset.cat,text,done:false,priority:'normal',tags:[],dueDate:null,repeat:'',lastResetDate:null,important:false,myDay:null});saveState();render()}
+
+// ── Inline Edit (double-click) ─────────────────────────────
+function openInlineEdit(id){
+  const itemEl=document.querySelector(`.todo-item[data-id="${id}"]`);
+  if(!itemEl||itemEl.classList.contains('editing'))return;
+  itemEl.classList.add('editing');itemEl.setAttribute('draggable','false');
+  const textEl=itemEl.querySelector('.todo-text'),origText=textEl.textContent;
+  const inp=document.createElement('input');inp.className='todo-inline-edit';inp.value=origText;
+  textEl.replaceWith(inp);inp.focus();inp.select();
+  const saveBtn=document.createElement('button');saveBtn.className='todo-save-btn';saveBtn.textContent='✓';saveBtn.title='Enter 保存';
+  const cancelBtn=document.createElement('button');cancelBtn.className='todo-cancel-btn';cancelBtn.textContent='✕';cancelBtn.title='Esc 取消';
+  itemEl.appendChild(saveBtn);itemEl.appendChild(cancelBtn);
+  let committed=false;
+  function save(){if(committed)return;committed=true;const newText=inp.value.trim();if(newText&&newText!==origText){const t=state.todos.find(t=>t.id===id);if(t){t.text=newText;saveState()}}render()}
+  function cancel(){if(committed)return;committed=true;render()}
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save()}if(e.key==='Escape'){e.preventDefault();cancel()}});
+  inp.addEventListener('blur',()=>setTimeout(save,160));
+  saveBtn.addEventListener('mousedown',e=>{e.preventDefault();save()});
+  cancelBtn.addEventListener('mousedown',e=>{e.preventDefault();cancel()});
+}
+
+// ── Todo Modal ─────────────────────────────────────────────
+function openAddTodoModal(){
+  editingTodoId=null;
+  document.getElementById('todo-modal-title').textContent='添加任务';
+  document.getElementById('todo-text-input').value='';
+  renderCatSelect(activeCat!=='all'&&activeCat!=='archive'?activeCat:(state.categories[0]?.id||''));
+  selectModalPri('normal');
+  document.getElementById('todo-due-input').value='';
+  document.getElementById('todo-tags-input').value='';
+  document.getElementById('todo-repeat-input').value='';
+  document.getElementById('todo-modal').style.display='flex';
+  setTimeout(()=>document.getElementById('todo-text-input').focus(),50);
+}
+function openEditTodoModal(id){
+  const t=state.todos.find(t=>t.id===id);if(!t)return;normTodo(t);
+  editingTodoId=id;
+  document.getElementById('todo-modal-title').textContent='编辑任务';
+  document.getElementById('todo-text-input').value=t.text;
+  renderCatSelect(t.cat);selectModalPri(t.priority||'normal');
+  document.getElementById('todo-due-input').value=t.dueDate||'';
+  document.getElementById('todo-tags-input').value=(t.tags||[]).map(tag=>'#'+tag).join(' ');
+  document.getElementById('todo-repeat-input').value=t.repeat||'';
+  document.getElementById('todo-modal').style.display='flex';
+  setTimeout(()=>document.getElementById('todo-text-input').focus(),50);
+}
+function closeTodoModal(){document.getElementById('todo-modal').style.display='none';editingTodoId=null}
+function renderCatSelect(sel){document.getElementById('todo-cat-select').innerHTML=state.categories.map(c=>`<option value="${c.id}" ${c.id===sel?'selected':''}>${c.icon} ${c.name}</option>`).join('')}
+function selectModalPri(val){modalPriority=val;['high','medium','normal'].forEach(p=>{document.getElementById('pri-'+p).className='pri-btn'+(p===val?' sel-'+p:'')})}
+function saveTodo(){
+  const text=document.getElementById('todo-text-input').value.trim(),cat=document.getElementById('todo-cat-select').value;
+  const due=document.getElementById('todo-due-input').value||null,tags=parseTags(document.getElementById('todo-tags-input').value);
+  const repeat=document.getElementById('todo-repeat-input').value||'';
+  if(!text){document.getElementById('todo-text-input').focus();return}
+  if(editingTodoId){const t=state.todos.find(t=>t.id===editingTodoId);if(t){t.text=text;t.cat=cat;t.priority=modalPriority;t.dueDate=due;t.tags=tags;t.repeat=repeat}}
+  else state.todos.push({id:genId(),cat,text,done:false,priority:modalPriority,dueDate:due,tags,repeat,lastResetDate:null});
+  saveState();closeTodoModal();render();
+}
+
+// ── Category Modal ─────────────────────────────────────────
+function openAddCatModal(){
+  editingCatId=null;
+  document.getElementById('cat-modal-title').textContent='添加分类';
+  document.getElementById('cat-name-input').value=document.getElementById('new-cat-input').value;
+  document.getElementById('cat-icon-input').value='📌';renderEmojiPicker('📌');
+  document.getElementById('cat-modal').style.display='flex';
+  setTimeout(()=>document.getElementById('cat-name-input').focus(),50);
+}
+function closeCatModal(){document.getElementById('cat-modal').style.display='none';editingCatId=null}
+function renderEmojiPicker(sel){document.getElementById('emoji-picker').innerHTML=EMOJIS.map(e=>`<div class="emoji-btn ${e===sel?'selected':''}" onclick="selectEmoji('${e}')">${e}</div>`).join('')}
+function selectEmoji(e){document.getElementById('cat-icon-input').value=e;renderEmojiPicker(e)}
+function saveCat(){
+  const name=document.getElementById('cat-name-input').value.trim(),icon=document.getElementById('cat-icon-input').value;
+  if(!name){document.getElementById('cat-name-input').focus();return}
+  if(editingCatId){const c=state.categories.find(c=>c.id===editingCatId);if(c){c.name=name;c.icon=icon}}
+  else state.categories.push({id:genId(),icon,name});
+  document.getElementById('new-cat-input').value='';saveState();closeCatModal();render();
+}
+
+// ── Category Inline Rename (double-click) ──────────────────
+function startCatRename(catId,e){
+  e.stopPropagation();
+  const labelEl=document.querySelector(`[data-rl="${catId}"]`);
+  if(!labelEl||labelEl.tagName==='INPUT')return;
+  const origName=labelEl.textContent;
+  const inp=document.createElement('input');inp.className='cat-nav-label-input';inp.value=origName;
+  labelEl.replaceWith(inp);inp.focus();inp.select();
+  let saved=false;
+  function save(){if(saved)return;saved=true;const newName=inp.value.trim();if(newName&&newName!==origName){const c=state.categories.find(c=>c.id===catId);if(c){c.name=newName;saveState()}}renderSidebar()}
+  function cancel(){if(saved)return;saved=true;renderSidebar()}
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save()}if(e.key==='Escape'){e.preventDefault();cancel()}});
+  inp.addEventListener('blur',()=>setTimeout(save,150));
+  inp.addEventListener('click',e=>e.stopPropagation());
+}
+
+// ── Context Menu ───────────────────────────────────────────
+function openCtxMenu(e,id){
+  e.preventDefault();e.stopPropagation();
+  closeCtxMenu();
+  const t=state.todos.find(t=>t.id===id);if(!t)return;normTodo(t);
+  const isMyDayNow=t.myDay===today();
+  const menu=document.getElementById('ctx-menu');
+  menu.innerHTML=`
+    <div class="ctx-item ${isMyDayNow?'active-flag':''}" onclick="closeCtxMenu();toggleMyDay('${id}')">
+      <span class="ctx-icon">☀️</span>${isMyDayNow?'从我的一天移除':'加入我的一天'}</div>
+    <div class="ctx-item ${t.important?'active-flag':''}" onclick="closeCtxMenu();toggleImportant('${id}')">
+      <span class="ctx-icon">${t.important?'⭐':'☆'}</span>${t.important?'取消重要标记':'标记为重要'}</div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-item" onclick="closeCtxMenu();cyclePriority('${id}')">
+      <span class="ctx-icon">🔺</span>切换优先级</div>
+    <div class="ctx-item" onclick="closeCtxMenu();openEditTodoModal('${id}')">
+      <span class="ctx-icon">✏️</span>编辑</div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-item" onclick="closeCtxMenu();archiveSingle('${id}')">
+      <span class="ctx-icon">📦</span>归档此任务</div>
+    <div class="ctx-item danger" onclick="closeCtxMenu();deleteTodoDirect('${id}')">
+      <span class="ctx-icon">🗑</span>删除</div>`;
+  // Position
+  menu.style.display='block';
+  const vw=window.innerWidth,vh=window.innerHeight;
+  const mw=menu.offsetWidth||200,mh=menu.offsetHeight||250;
+  let x=e.clientX,y=e.clientY;
+  if(x+mw>vw-8)x=vw-mw-8;
+  if(y+mh>vh-8)y=vh-mh-8;
+  menu.style.left=x+'px';menu.style.top=y+'px';
+}
+function closeCtxMenu(){
+  const m=document.getElementById('ctx-menu');
+  if(m)m.style.display='none';
+}
+document.addEventListener('click',()=>closeCtxMenu());
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCtxMenu()});
+
+function archiveSingle(id){
+  if(!state.archive)state.archive=[];
+  const idx=state.todos.findIndex(t=>t.id===id);if(idx===-1)return;
+  const item=state.todos[idx];
+  const archived={...item,archivedAt:new Date().toISOString()};
+  state.archive.unshift(archived);
+  state.todos.splice(idx,1);
+  saveState();render();
+  showToast(`📦 已归档「${item.text.substring(0,20)}${item.text.length>20?'…':''}」`,()=>{
+    state.todos.splice(idx,0,item);state.archive=state.archive.filter(a=>a.id!==id);saveState();render();
+  });
+}
+
+// ── Archive ────────────────────────────────────────────────
+function archiveCompleted(){
+  if(!state.archive)state.archive=[];
+  const doneItems=state.todos.filter(t=>t.done);
+  if(!doneItems.length){showToast('没有已完成的任务可归档');return}
+  const now=new Date().toISOString();
+  doneItems.forEach(t=>{state.archive.unshift({...t,archivedAt:now})});
+  state.todos=state.todos.filter(t=>!t.done);
+  saveState();render();
+  showToast(`📦 已归档 ${doneItems.length} 条任务`,()=>{
+    doneItems.forEach(t=>{state.archive=state.archive.filter(a=>a.id!==t.id);state.todos.push(t)});
+    saveState();render();
+  });
+}
+
+function restoreFromArchive(id){
+  if(!state.archive)return;
+  const idx=state.archive.findIndex(a=>a.id===id);if(idx===-1)return;
+  const item={...state.archive[idx]};delete item.archivedAt;
+  item.done=false;
+  state.archive.splice(idx,1);
+  state.todos.push(item);
+  saveState();render();
+  showToast(`↩ 已恢复「${item.text.substring(0,20)}${item.text.length>20?'…':''}」`);
+}
+
+function deleteFromArchive(id){
+  if(!state.archive)return;
+  const idx=state.archive.findIndex(a=>a.id===id);if(idx===-1)return;
+  const item=state.archive[idx];
+  state.archive.splice(idx,1);
+  saveState();render();
+  showToast(`🗑 已永久删除「${item.text.substring(0,20)}${item.text.length>20?'…':''}」`,()=>{
+    state.archive.splice(idx,0,item);saveState();render();
+  });
+}
+
+function clearArchive(){
+  if(!state.archive||!state.archive.length)return;
+  if(!confirm(`确认清空所有 ${state.archive.length} 条归档记录？此操作不可撤销。`))return;
+  state.archive=[];saveState();render();
+}
+
+function renderArchiveView(area,search){
+  if(!state.archive||!state.archive.length){
+    area.innerHTML=`<div class="archive-empty"><div style="font-size:2rem;margin-bottom:0.75rem">📭</div><div>归档为空</div><div style="margin-top:0.4rem;font-size:0.75rem;color:var(--muted)">完成任务后点「归档完成」可以整理列表</div></div>`;
+    return;
+  }
+  let items=state.archive;
+  if(search)items=items.filter(t=>t.text.toLowerCase().includes(search));
+
+  // Group by date
+  const groups={};
+  items.forEach(t=>{
+    const d=t.archivedAt?t.archivedAt.slice(0,10):'未知';
+    if(!groups[d])groups[d]=[];
+    groups[d].push(t);
+  });
+
+  const fmt=d=>{
+    const today=new Date().toISOString().slice(0,10);
+    if(d===today)return '今天';
+    const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+    if(d===yesterday)return '昨天';
+    return d.replace(/-/g,' / ');
+  };
+
+  let html=`<div style="display:flex;align-items:center;justify-content:space-between;padding:0.3rem 0.75rem 0.75rem;"><span style="font-size:0.75rem;color:var(--muted);font-family:var(--font-mono)">共 ${items.length} 条</span><button class="btn-icon" onclick="clearArchive()" style="font-size:0.72rem;padding:0.2rem 0.6rem;">🗑 清空归档</button></div>`;
+
+  Object.keys(groups).sort((a,b)=>b.localeCompare(a)).forEach(date=>{
+    html+=`<div class="done-divider"><div class="done-divider-line"></div><span class="done-divider-label">📦 ${fmt(date)}</span><div class="done-divider-line"></div></div>`;
+    groups[date].forEach(item=>{
+      const cat=state.categories.find(c=>c.id===item.cat);
+      html+=`<div class="todo-item done" style="opacity:0.7;">
+        <span class="todo-drag-handle" style="visibility:hidden">⠿</span>
+        <div class="checkbox" style="cursor:default;"></div>
+        <span class="pri-icon normal" style="cursor:default"> </span>
+        <div class="todo-main">
+          <span class="todo-text">${escHtml(item.text)}</span>
+          <div class="todo-meta" style="margin-top:0.15rem;">
+            ${cat?`<span class="tag-chip" style="cursor:default">${cat.icon} ${escHtml(cat.name)}</span>`:''}
+            ${(item.tags||[]).map(tag=>`<span class="tag-chip">#${escHtml(tag)}</span>`).join('')}
+          </div>
+        </div>
+        <div class="todo-actions">
+          <button class="archive-restore-btn" onclick="restoreFromArchive('${item.id}')" title="恢复到任务列表" style="display:block;opacity:0.7;">↩ 恢复</button>
+          <button class="todo-del-btn todo-act-btn del" onclick="deleteFromArchive('${item.id}')" title="永久删除" style="opacity:0.7;">✕</button>
+        </div></div>`;
+    });
+  });
+  area.innerHTML=html;
+}
+
+// ── Repeat Reset ────────────────────────────────────────────
+function checkRepeatReset(){
+  const todayStr=today();
+  const todayDate=new Date(todayStr+'T00:00:00');
+  let changed=false;
+  state.todos.forEach(t=>{
+    normTodo(t);
+    // Clear myDay if it's not today
+    if(t.myDay&&t.myDay!==todayStr){t.myDay=null;changed=true}
+    // Repeat reset
+    if(!t.repeat||!t.done)return;
+    const last=t.lastResetDate||todayStr;
+    const lastDate=new Date(last+'T00:00:00');
+    let shouldReset=false;
+    if(t.repeat==='daily'&&todayDate>lastDate)shouldReset=true;
+    else if(t.repeat==='weekly'&&(todayDate-lastDate)/86400000>=7)shouldReset=true;
+    else if(t.repeat==='monthly'&&(todayDate.getFullYear()>lastDate.getFullYear()||todayDate.getMonth()>lastDate.getMonth()))shouldReset=true;
+    if(shouldReset){t.done=false;t.lastResetDate=todayStr;changed=true}
+  });
+  if(changed)saveState();
+}
+
+// ── Toast ──────────────────────────────────────────────────
+let _toastTimer=null;
+function showToast(message,undoFn=null,duration=4500){
+  const container=document.getElementById('toast-container');
+  clearTimeout(_toastTimer);
+  container.innerHTML='';
+  container._undoFn=undoFn;
+  const toast=document.createElement('div');
+  toast.className='toast';
+  toast.style.setProperty('--toast-dur',duration+'ms');
+  toast.innerHTML=`<span class="toast-msg">${message}</span>${undoFn?'<button class="toast-undo-btn" onclick="undoToast()">撤销</button>':''}<div class="toast-progress"></div>`;
+  container.appendChild(toast);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>toast.classList.add('visible')));
+  _toastTimer=setTimeout(dismissToast,duration);
+}
+function undoToast(){
+  const container=document.getElementById('toast-container');
+  if(container._undoFn){container._undoFn();container._undoFn=null}
+  dismissToast();
+}
+function dismissToast(){
+  clearTimeout(_toastTimer);
+  const toast=document.getElementById('toast-container').querySelector('.toast');
+  if(toast){toast.classList.remove('visible');setTimeout(()=>{document.getElementById('toast-container').innerHTML=''},280)}
+}
+
+// ── Delete Modal (keep for categories) ─────────────────────
+function openDelCat(id){const cat=state.categories.find(c=>c.id===id);if(!cat)return;const n=state.todos.filter(t=>t.cat===id).length;pendingDelType='cat';pendingDelId=id;document.getElementById('del-msg').textContent=`确定删除分类「${cat.name}」吗？该分类下 ${n} 个任务也会删除。`;document.getElementById('del-modal').style.display='flex'}
+function openDelTodo(id){const t=state.todos.find(t=>t.id===id);if(!t)return;pendingDelType='todo';pendingDelId=id;document.getElementById('del-msg').textContent=`确定删除「${t.text.substring(0,50)}」吗？`;document.getElementById('del-modal').style.display='flex'}
+function closeDelModal(){document.getElementById('del-modal').style.display='none';pendingDelType=null;pendingDelId=null}
+function confirmDel(){
+  if(pendingDelType==='cat'){state.categories=state.categories.filter(c=>c.id!==pendingDelId);state.todos=state.todos.filter(t=>t.cat!==pendingDelId);if(activeCat===pendingDelId)activeCat='all'}
+  else if(pendingDelType==='todo')state.todos=state.todos.filter(t=>t.id!==pendingDelId);
+  saveState();closeDelModal();render();
+}
+
+// ── Shortcuts Modal ────────────────────────────────────────
+function openShortcutsModal(){document.getElementById('shortcuts-modal').style.display='flex'}
+function closeShortcutsModal(){document.getElementById('shortcuts-modal').style.display='none'}
+
+// ── Export / Import ────────────────────────────────────────
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:'todo-backup-'+new Date().toISOString().slice(0,10)+'.json'});
+  a.click();URL.revokeObjectURL(a.href);
+}
+function importJSON(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{try{const data=JSON.parse(ev.target.result);if(!data.categories||!data.todos)throw new Error('格式不对');if(!confirm(`导入将覆盖当前数据（${data.todos.length} 条任务，${data.categories.length} 个分类）。确认？`))return;state=data;saveState();render();alert('导入成功！')}catch(err){alert('导入失败：'+err.message)}e.target.value=''};
+  reader.readAsText(file);
+}
+
+// ── Drag & Drop: Todos ─────────────────────────────────────
+let todoDrag={id:null,catId:null};
+function attachTodoDrag(){
+  document.querySelectorAll('.todo-item[data-id]').forEach(el=>{
+    el.addEventListener('dragstart',e=>{todoDrag.id=el.dataset.id;todoDrag.catId=el.dataset.cat;el.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',todoDrag.id)});
+    el.addEventListener('dragend',()=>{el.classList.remove('dragging');document.querySelectorAll('.todo-item').forEach(i=>i.classList.remove('drag-over-top','drag-over-bottom'));document.querySelectorAll('.section-header').forEach(i=>i.classList.remove('drag-over'));todoDrag={id:null,catId:null}});
+    el.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move';if(el.dataset.id===todoDrag.id)return;el.classList.remove('drag-over-top','drag-over-bottom');const rect=el.getBoundingClientRect();el.classList.add(e.clientY<rect.top+rect.height/2?'drag-over-top':'drag-over-bottom')});
+    el.addEventListener('dragleave',()=>el.classList.remove('drag-over-top','drag-over-bottom'));
+    el.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();el.classList.remove('drag-over-top','drag-over-bottom');if(!todoDrag.id||el.dataset.id===todoDrag.id)return;
+      const insertBefore=e.clientY<el.getBoundingClientRect().top+el.getBoundingClientRect().height/2;
+      const fromIdx=state.todos.findIndex(t=>t.id===todoDrag.id),toIdx=state.todos.findIndex(t=>t.id===el.dataset.id);
+      if(fromIdx===-1||toIdx===-1)return;
+      const[moved]=state.todos.splice(fromIdx,1);
+      if(el.dataset.cat&&el.dataset.cat!==moved.cat)moved.cat=el.dataset.cat;
+      const newTo=state.todos.findIndex(t=>t.id===el.dataset.id);
+      state.todos.splice(insertBefore?newTo:newTo+1,0,moved);
+      saveState();render();
+    });
+  });
+}
+function sectionDrop(catId,e){e.preventDefault();e.stopPropagation();document.querySelectorAll('.section-header').forEach(h=>h.classList.remove('drag-over'));if(!todoDrag.id)return;const t=state.todos.find(t=>t.id===todoDrag.id);if(t&&t.cat!==catId){t.cat=catId;saveState();render()}}
+
+// ── Drag & Drop: Categories ────────────────────────────────
+let catDragId=null;
+function catDragStart(e){catDragId=this.dataset.catId;e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',catDragId);setTimeout(()=>this.style.opacity='0.4',0)}
+function catDragOver(e){e.preventDefault();e.dataTransfer.dropEffect='move';if(this.dataset.catId===catDragId)return;this.classList.remove('drag-over-top','drag-over-bottom');const rect=this.getBoundingClientRect();this.classList.add(e.clientY<rect.top+rect.height/2?'drag-over-top':'drag-over-bottom')}
+function catDragLeave(){this.classList.remove('drag-over-top','drag-over-bottom')}
+function catDrop(e){e.preventDefault();const targetId=this.dataset.catId;this.classList.remove('drag-over-top','drag-over-bottom');if(!catDragId||targetId===catDragId)return;
+  const insertBefore=e.clientY<this.getBoundingClientRect().top+this.getBoundingClientRect().height/2;
+  const fromIdx=state.categories.findIndex(c=>c.id===catDragId);const[moved]=state.categories.splice(fromIdx,1);
+  const newTo=state.categories.findIndex(c=>c.id===targetId);state.categories.splice(insertBefore?newTo:newTo+1,0,moved);
+  saveState();render()}
+function catDragEnd(){this.style.opacity='';document.querySelectorAll('.cat-nav-item').forEach(i=>i.classList.remove('drag-over-top','drag-over-bottom'));catDragId=null}
+
+// ── Keyboard Shortcuts ─────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  const inInput=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName);
+  if(e.key==='Escape'&&!document.querySelector('.todo-inline-edit')&&!document.querySelector('.cat-nav-label-input')){
+    closeCatModal();closeTodoModal();closeDelModal();closeShortcutsModal();if(ghToken)closeSetupModal();
+  }
+  if(!inInput){
+    if(e.key==='/'||(e.ctrlKey&&e.key==='k')){e.preventDefault();document.getElementById('search-input').focus()}
+    if(e.key==='?')openShortcutsModal();
+  }
+});
+document.querySelectorAll('.modal-overlay').forEach(ov=>{
+  ov.addEventListener('click',e=>{if(e.target!==ov)return;closeCatModal();closeTodoModal();closeDelModal();closeShortcutsModal();if(ghToken)closeSetupModal()});
+});
+document.getElementById('new-cat-input').addEventListener('keydown',e=>{if(e.key==='Enter')openAddCatModal()});
+document.getElementById('gh-token-input').addEventListener('keydown',e=>{if(e.key==='Enter')connectGist()});
+document.getElementById('todo-text-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))saveTodo()});
+
+// ── Theme ─────────────────────────────────────────────────
+function setupTheme() {
+  currentTheme = localStorage.getItem(LS_THEME) || 'dark';
+  currentAccent = localStorage.getItem(LS_ACCENT) || 'default';
+  applyTheme();
+
+  // New: Event listener for opening the theme settings modal
+  document.getElementById('open-theme-modal-btn').addEventListener('click', openThemeSettingsModal);
+}
+
+function openThemeSettingsModal() {
+  const modal = document.getElementById('theme-settings-modal');
+  modal.style.display = 'flex';
+
+  setupAccentPicker(); // Initial render
+
+  // Attach event listeners for base theme buttons
+  document.querySelectorAll('.theme-mode-btn').forEach(button => {
+    button.onclick = () => {
+      currentTheme = button.dataset.theme;
+      localStorage.setItem(LS_THEME, currentTheme);
+      applyTheme();
+    };
+  });
+
+  // Add event listener to close modal when clicking outside
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) {
+      closeThemeSettingsModal();
+    }
+  });
+}
+
+function closeThemeSettingsModal() {
+  document.getElementById('theme-settings-modal').style.display = 'none';
+}
+
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  document.documentElement.setAttribute('data-accent', currentAccent);
+
+  // Update 'selected' class for base theme buttons in the modal
+  document.querySelectorAll('.theme-mode-btn').forEach(button => {
+    button.classList.toggle('selected', button.dataset.theme === currentTheme);
+  });
+
+  setupAccentPicker(); // Re-render accent dots
+}
+
+function setupAccentPicker() {
+  const accents = [
+    { id: 'default',        name: '默认',   color: '#f5d44b', color2: '#70d8f7' },
+    { id: 'sepia',          name: '怀旧',   color: '#a3816e', color2: '#7cb365' },
+    { id: 'greenish',       name: '护眼绿', color: '#6ea381', color2: '#65b37c' },
+    { id: 'brownish-yellow',name: '棕黄色', color: '#B8860B', color2: '#DAA520' },
+    { id: 'blue',           name: '蓝色',   color: '#337ab7', color2: '#5bc0de' },
+    { id: 'purple',         name: '紫色',   color: '#8A2BE2', color2: '#9370DB' },
+  ];
+  const picker = document.getElementById('accent-picker');
+  if (!picker) return;
+
+  picker.innerHTML = accents.map(({ id, name, color, color2 }) => {
+    const isSelected = currentAccent === id;
+    const checkmark = isSelected
+      ? `<span style="margin-right:0.75rem;font-size:12px;color:var(--text);font-weight:700;">✓</span>`
+      : '';
+    return `<div class="theme-dot ${isSelected ? 'selected' : ''}"
+                 data-color="${id}"
+                 onclick="setAccentColor('${id}')"
+                 title="${name}"
+                 style="position:relative;">
+               <span class="accent-swatch" style="background:linear-gradient(135deg,${color} 55%,${color2} 55%);"></span>
+               <span class="accent-name">${name}</span>
+               ${checkmark}
+             </div>`;
+  }).join('');
+}
+
+function setAccentColor(accent) {
+  currentAccent = accent;
+  localStorage.setItem(LS_ACCENT, accent);
+  document.documentElement.setAttribute('data-accent', accent);
+  // Re-render dots to update selection
+  const picker = document.getElementById('accent-picker');
+  if (picker) {
+    picker.querySelectorAll('.theme-dot').forEach(dot => {
+      dot.classList.toggle('selected', dot.dataset.color === accent);
+    });
+  }
+}
+
+// ── Init ───────────────────────────────────────────────────
+(async()=>{
+  setupTheme();
+  const cached=(()=>{try{return JSON.parse(localStorage.getItem(LS_CACHE))}catch(e){return null}})();
+  state=normState(cached||JSON.parse(JSON.stringify(DEFAULT_DATA)));
+  checkRepeatReset();
+  render();
+  state=normState(await loadState());
+  checkRepeatReset();
+  render();
+  if(!ghToken){openSetupModal();document.getElementById('setup-cancel-btn').textContent='稍后设置'}
+})();
+
+</script>
+</body>
+</html>
